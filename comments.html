@@ -1,0 +1,77 @@
+<?php $pageTitle = 'Commentaires'; ?>
+<style>
+    .comments-header{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        flex-wrap:wrap;
+        gap:12px;
+        margin-bottom:18px;
+    }
+    .chip{
+        background:#eef2ff;
+        color:#4f46e5;
+        padding:8px 14px;
+        border-radius:999px;
+        font-weight:600;
+    }
+    .table-actions a{
+        color:#ef4444;
+        font-weight:600;
+    }
+</style>
+
+<div class="comments-header">
+    <div>
+        <h3 style="margin:0;">Commentaires des stories</h3>
+        <p style="margin:4px 0 0;color:#94a3b8;">Modérez rapidement les retours de la communauté.</p>
+    </div>
+    <form action="/ablelink/admin/comments" method="GET" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <input type="search" name="q" value="<?php echo isset($q) ? htmlspecialchars($q) : ''; ?>" placeholder="Rechercher (story, auteur, texte)" class="input" style="min-width:240px;">
+        <button type="submit" class="chip" style="background:#4f46e5;color:white;">Filtrer</button>
+        <a href="/ablelink/admin/comments" class="chip" style="background:#64748b;color:white;">Réinitialiser</a>
+        <span class="chip">
+            <?php echo isset($stats['total_comments']) ? (int)$stats['total_comments'] : 0; ?> commentaires
+        </span>
+    </form>
+</div>
+
+<?php if(isset($allComments) && count($allComments) > 0): ?>
+    <table>
+        <thead>
+            <tr>
+                <th>Story</th>
+                <th>Auteur</th>
+                <th>Commentaire</th>
+                <th>Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($allComments as $comment): ?>
+            <?php
+                $storyId = isset($comment['story_id']) ? (int)$comment['story_id'] : 0;
+                $storyTitle = isset($comment['story_title']) ? htmlspecialchars($comment['story_title']) : 'Story';
+                $userName = isset($comment['user_name']) ? htmlspecialchars($comment['user_name']) : 'Anonyme';
+                $content = isset($comment['content']) ? htmlspecialchars(substr($comment['content'],0,120)) : '';
+                $date = isset($comment['created_at']) ? @strtotime($comment['created_at']) : false;
+            ?>
+            <tr>
+                <td>
+                    <a style="color:#4f46e5;font-weight:600;" target="_blank" href="/ablelink/stories/show/<?php echo $storyId; ?>">
+                        <?php echo strlen($storyTitle) > 40 ? substr($storyTitle,0,40).'…' : $storyTitle; ?>
+                    </a>
+                </td>
+                <td><?php echo $userName; ?></td>
+                <td><?php echo $content; ?></td>
+                <td><?php echo $date ? date('d/m/Y H:i',$date) : 'N/A'; ?></td>
+                <td class="table-actions">
+                    <a href="/ablelink/admin/comments/delete/<?php echo isset($comment['id']) ? (int)$comment['id'] : 0; ?>" onclick="return confirm('Supprimer ce commentaire ?');">Supprimer</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php else: ?>
+    <p style="text-align:center;color:#94a3b8;">Aucun commentaire à afficher.</p>
+<?php endif; ?>

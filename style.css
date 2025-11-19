@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; line-height: 1.6; }
+
+.container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+/* Header & Navbar */
+header { background: white; box-shadow: 0 2px 15px rgba(0,0,0,0.05); padding: 1rem 0; position: sticky; top: 0; z-index: 100; }
+.header-top { display: flex; justify-content: space-between; align-items: center; }
+.logo { font-size: 1.8rem; font-weight: 700; color: #6366f1; }
+nav a { margin: 0 1rem; color: #64748b; text-decoration: none; font-weight: 500; }
+nav a:hover { color: #6366f1; }
+
+.navbar { background: #6366f1; color: white; padding: 0.8rem 0; border-radius: 12px; margin: 20px 0; }
+.navbar ul { display: flex; justify-content: center; gap: 2.5rem; list-style: none; }
+.navbar a { color: white; text-decoration: none; font-weight: 500; }
+.navbar a:hover { text-decoration: underline; }
+
+/* Layout principal */
+.main-content { display: grid; grid-template-columns: 300px 1fr; gap: 2rem; margin-top: 2rem; }
+
+/* Sidebar */
+.sidebar { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); height: fit-content; }
+.role-badge { background: #eef2ff; color: #6366f1; padding: 0.6rem 1.2rem; border-radius: 50px; font-weight: 600; text-align: center; margin-bottom: 1.5rem; }
+.module-title { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+.module-desc { color: #64748b; font-size: 0.95rem; margin-bottom: 2rem; }
+.btn-create { background: #6366f1; color: white; border: none; padding: 1rem; width: 100%; border-radius: 8px; font-size: 1.1rem; cursor: pointer; font-weight: 600; transition: 0.3s; }
+.btn-create:hover { background: #4f46e5; }
+
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+.stat-box { background: #f1f5f9; padding: 1.2rem; border-radius: 8px; text-align: center; }
+.stat-number { font-size: 2.2rem; font-weight: 700; color: #6366f1; }
+.stat-label { color: #64748b; font-size: 0.9rem; }
+
+/* Filtres */
+.filters { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+.filters select, .filters input { padding: 0.8rem; border: 1px solid #e2e8f0; border-radius: 8px; min-width: 180px; }
+
+/* Cartes événements */
+.events-grid { display: repeat(auto-fill, minmax(340px, 1fr)); gap: 2rem; }
+.event-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 25px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.event-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+.event-card img { width: 100%; height: 200px; object-fit: cover; }
+.event-info { padding: 1.5rem; }
+.event-title { font-size: 1.35rem; font-weight: 600; margin-bottom: 0.5rem; }
+.event-meta { color: #64748b; font-size: 0.95rem; margin-bottom: 1rem; }
+.event-actions { display: flex; gap: 1rem; margin-top: 1rem; }
+.btn-details { background: #eef2ff; color: #6366f1; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 500; }
+.btn-edit { background: #fefce8; color: #ca8a04; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 500; }
+.btn-delete { background: #fee2e2; color: #ef4444; padding: 0.6rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: 500; }
+
+/* Modal */
+.modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+.modal-content { background: white; padding: 2.5rem; border-radius: 12px; width: 90%; max-width: 600px; position: relative; }
+.close { position: absolute; top: 15px; right: 20px; font-size: 2rem; cursor: pointer; color: #94a3b8; }
+.modal input, .modal textarea, .modal select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #e2e8f0; border-radius: 8px; }
+.modal button[type="submit"] { background: #6366f1; color: white; padding: 12px 30px; border: none; border-radius: 8px; cursor: pointer; }
+
+/* Footer */
+footer { text-align: center; padding: 4rem 0; color: #64748b; margin-top: 6rem; border-top: 1px solid #e2e8f0; font-size: 0.9rem; }
+
+/* Responsive */
+@media (max-width: 992px) {
+    .main-content { grid-template-columns: 1fr; }
+    .sidebar { order: 2; }
+}

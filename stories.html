@@ -1,0 +1,131 @@
+<?php $pageTitle = isset($pageTitle) ? $pageTitle : 'Gestion des stories'; ?>
+<style>
+    .stories-toolbar{
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:16px;
+        flex-wrap:wrap;
+        margin-bottom:18px;
+    }
+    .btn-primary{
+        background:#4f46e5;
+        color:#fff;
+        padding:12px 20px;
+        border-radius:12px;
+        font-weight:600;
+        display:inline-flex;
+        align-items:center;
+        gap:8px;
+    }
+    .status-badge{
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        padding:6px 10px;
+        border-radius:999px;
+        font-size:.78rem;
+        font-weight:600;
+        text-transform:capitalize;
+    }
+    .status-pending{background:#fff4e6;color:#d97706;}
+    .status-published{background:#ecfdf3;color:#059669;}
+    .status-featured{background:#e0e7ff;color:#4338ca;}
+    .status-archived{background:#f3f4f6;color:#6b7280;}
+    .table-actions{
+        display:flex;
+        gap:10px;
+        flex-wrap:wrap;
+    }
+    .table-actions a{
+        font-weight:600;
+        font-size:.9rem;
+    }
+    .table-actions a.edit{color:#f59e0b;}
+    .table-actions a.delete{color:#ef4444;}
+</style>
+
+<div class="stories-toolbar">
+    <div>
+        <h3 style="margin:0;">Toutes les success stories</h3>
+        <p style="margin:4px 0 0;color:#94a3b8;">Modérez, éditez ou supprimez les contributions.</p>
+    </div>
+    <form action="/ablelink/admin/stories" method="GET" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <select name="status" class="input" style="min-width:160px;">
+            <?php $sel = isset($selectedStatus) ? $selectedStatus : ''; ?>
+            <option value="" <?php echo $sel === '' ? 'selected' : ''; ?>>Tous les statuts</option>
+            <option value="pending" <?php echo $sel === 'pending' ? 'selected' : ''; ?>>En attente</option>
+            <option value="published" <?php echo $sel === 'published' ? 'selected' : ''; ?>>Publié</option>
+            <option value="featured" <?php echo $sel === 'featured' ? 'selected' : ''; ?>>Mis en avant</option>
+            <option value="archived" <?php echo $sel === 'archived' ? 'selected' : ''; ?>>Archivé</option>
+        </select>
+        <input type="search" name="q" value="<?php echo isset($q) ? htmlspecialchars($q) : ''; ?>" placeholder="Rechercher titre ou auteur..." class="input" style="min-width:200px;">
+        <button type="submit" class="btn-primary"><i class="bi bi-funnel"></i>Filtrer</button>
+        <a href="/ablelink/admin/stories" class="btn-primary" style="background:#64748b;"><i class="bi bi-x-circle"></i>Réinitialiser</a>
+        <a class="btn-primary" target="_blank" href="/ablelink/stories/create"><i class="bi bi-plus-circle"></i>Nouvelle story</a>
+    </form>
+</div>
+    
+        <?php if(isset($stories) && is_array($stories) && count($stories) > 0): ?>
+    <table>
+                <thead>
+            <tr>
+                <th>ID</th>
+                <th>Titre</th>
+                <th>Auteur</th>
+                <th>Date</th>
+                <th>Statut</th>
+                <th>Likes</th>
+                <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($stories as $story): ?>
+                    <?php
+                        $storyId = isset($story['id']) ? (int)$story['id'] : 0;
+                        $storyTitle = isset($story['title']) ? htmlspecialchars($story['title']) : 'Sans titre';
+                        $storyUserName = isset($story['user_name']) ? htmlspecialchars($story['user_name']) : 'Anonyme';
+                $storyDate = 'N/A';
+                        if(isset($story['created_at'])) {
+                    $ts = @strtotime($story['created_at']);
+                    if($ts) $storyDate = date('d/m/Y H:i', $ts);
+                        }
+                        $likesCount = isset($story['likes_count']) ? (int)$story['likes_count'] : 0;
+                $status = isset($story['status']) ? $story['status'] : 'pending';
+            ?>
+            <tr>
+                <td><?php echo $storyId; ?></td>
+                <td>
+                    <a style="color:#4f46e5;font-weight:600;" target="_blank" href="/ablelink/stories/show/<?php echo $storyId; ?>">
+                        <?php echo strlen($storyTitle) > 60 ? substr($storyTitle,0,60).'…' : $storyTitle; ?>
+                            </a>
+                        </td>
+                <td><?php echo $storyUserName; ?></td>
+                <td><?php echo $storyDate; ?></td>
+                <td><span class="status-badge status-<?php echo $status; ?>"><?php echo $status; ?></span></td>
+                <td><span class="badge"><i class="bi bi-heart-fill"></i><?php echo $likesCount; ?></span></td>
+                <td>
+                    <div class="table-actions">
+                        <a class="edit" target="_blank" href="/ablelink/stories/edit/<?php echo $storyId; ?>">Modifier</a>
+                        <?php if($status !== 'published'): ?>
+                            <a class="edit" href="/ablelink/admin/stories/status/<?php echo $storyId; ?>/published">Publier</a>
+                        <?php endif; ?>
+                        <?php if($status !== 'featured'): ?>
+                            <a class="edit" href="/ablelink/admin/stories/status/<?php echo $storyId; ?>/featured">Mettre en avant</a>
+                        <?php endif; ?>
+                        <?php if($status !== 'archived'): ?>
+                            <a class="edit" href="/ablelink/admin/stories/status/<?php echo $storyId; ?>/archived">Archiver</a>
+                        <?php endif; ?>
+                        <?php if($status !== 'pending'): ?>
+                            <a class="edit" href="/ablelink/admin/stories/status/<?php echo $storyId; ?>/pending">Repasser en attente</a>
+                        <?php endif; ?>
+                        <a class="delete" href="/ablelink/admin/stories/delete/<?php echo $storyId; ?>" onclick="return confirm('Supprimer cette story ?');">Supprimer</a>
+                    </div>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+    <p style="text-align:center;color:#94a3b8;">Aucune story pour le moment.</p>
+        <?php endif; ?>

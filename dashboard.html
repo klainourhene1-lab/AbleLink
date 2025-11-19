@@ -1,0 +1,72 @@
+<?php $pageTitle = 'Tableau de bord'; ?>
+<style>
+    .stats-grid{
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+        gap:18px;
+        margin-bottom:32px;
+    }
+    .mini-card{
+        background:linear-gradient(135deg,#f8faff,#eef2ff);
+        border-radius:18px;
+        padding:18px;
+    }
+    .mini-card h4{margin:0 0 4px;font-size:.9rem;color:#6b7280;}
+    .mini-card p{margin:0;font-size:2rem;font-weight:700;color:#4338ca;}
+    .table-actions a{color:#ef4444;font-weight:600;}
+</style>
+<div class="stats-grid">
+    <div class="mini-card">
+        <h4>Stories publiées</h4>
+        <p><?php echo isset($stats['total_stories']) ? (int)$stats['total_stories'] : 0; ?></p>
+        </div>
+    <div class="mini-card">
+        <h4>Commentaires</h4>
+        <p><?php echo isset($stats['total_comments']) ? (int)$stats['total_comments'] : 0; ?></p>
+        </div>
+    <div class="mini-card">
+        <h4>Likes cumulés</h4>
+        <p><?php echo isset($stats['total_likes']) ? (int)$stats['total_likes'] : 0; ?></p>
+        </div>
+    </div>
+    
+<h3 style="margin-bottom:16px;">Dernières contributions</h3>
+        <?php if(isset($stories) && is_array($stories) && count($stories) > 0): ?>
+    <table>
+                <thead>
+            <tr>
+                <th>#</th>
+                <th>Titre</th>
+                <th>Auteur</th>
+                <th>Date</th>
+                <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach(array_slice($stories, 0, 10) as $story): ?>
+            <tr>
+                <td><?php echo isset($story['id']) ? $story['id'] : ''; ?></td>
+                <td>
+                    <a style="color:#4f46e5;font-weight:600;" target="_blank" href="/ablelink/stories/show/<?php echo isset($story['id']) ? $story['id'] : ''; ?>">
+                        <?php echo isset($story['title']) ? htmlspecialchars(substr($story['title'],0,60)) : 'Sans titre'; ?>
+                            </a>
+                        </td>
+                <td><?php echo isset($story['user_name']) ? htmlspecialchars($story['user_name']) : 'Anonyme'; ?></td>
+                <td>
+                            <?php 
+                        $date = isset($story['created_at']) ? @strtotime($story['created_at']) : false;
+                        echo $date ? date('d/m/Y', $date) : 'N/A';
+                            ?>
+                        </td>
+                <td class="table-actions">
+                    <a href="/ablelink/admin/stories/delete/<?php echo isset($story['id']) ? $story['id'] : ''; ?>" onclick="return confirm('Supprimer cette story ?');">
+                        Supprimer
+                    </a>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+    <p style="text-align:center;color:#94a3b8;">Aucune story pour le moment.</p>
+        <?php endif; ?>
