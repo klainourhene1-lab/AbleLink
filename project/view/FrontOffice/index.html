@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AbeLink — Module Événements Inclusifs</title>
+    <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <header>
+        <div class="container">
+            <nav class="glass">
+                <div class="logo" onclick="window.location.href='index.html'">
+                    <div class="logo-icon">AL</div>
+                    <span>AbeLink — Événements Inclusifs</span>
+                </div>
+                <div style="display: flex; align-items: center;">
+<div class="nav-links">
+    <a href="../FrontOffice/index.html">Accueil</a>
+    <a href="../Control/evaluations-evenements.php">Évaluations & Événements</a>
+    <a href="#" id="moderationLink" style="display: none;">Modération</a>
+    <a href="../Backoffice/dashboard.html" id="dashboardLink" style="display: none;">Tableau de bord</a>
+</div>
+                    <div class="role-selector">
+                        <select id="roleSelect" class="input" style="width: 150px;" onchange="changeUserRole()">
+                            <option value="user">Utilisateur</option>
+                            <option value="company">Entreprise</option>
+                            <option value="inclusion">Responsable Inclusion</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                        <div id="roleBadge" class="role-badge user">Utilisateur</div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="content-wrapper">
+            <section class="hero glass">
+                <div class="hero-content">
+                    <h1>Module de Gestion des Événements Inclusifs</h1>
+                    <p>Un système unifié où les entreprises et AbeLink organisent des événements inclusifs, et où les participants évaluent l'accessibilité et l'inclusion.</p>
+                    <a href="evaluations-evenements.html" class="cta-button primary">Explorer les événements</a>
+                </div>
+                <div class="hero-image">
+                    <div style="width: 100%; max-width: 440px; height: 300px; background: rgba(255, 255, 255, 0.1); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 48px;">
+                        🌍
+                    </div>
+                </div>
+            </section>
+
+            <section class="stats">
+                <div class="stat-card glass">
+                    <div class="stat-number" id="totalEvents">0</div>
+                    <div class="stat-label">Événements créés</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-number" id="totalParticipants">0</div>
+                    <div class="stat-label">Participations</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-number" id="avgAccessibility">0</div>
+                    <div class="stat-label">Note d'accessibilité moyenne</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-number" id="pendingModeration">0</div>
+                    <div class="stat-label">Évaluations en attente</div>
+                </div>
+            </section>
+
+            <section class="features">
+                <div class="feature-card glass">
+                    <div class="feature-icon">✨</div>
+                    <h3>Pour les Entreprises</h3>
+                    <p>Créez et gérez vos événements inclusifs, suivez les inscriptions et consultez les retours.</p>
+                </div>
+                
+                <div class="feature-card glass">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Pour les Participants</h3>
+                    <p>Inscrivez-vous aux événements et évaluez l'accessibilité et l'inclusion après participation.</p>
+                </div>
+                
+                <div class="feature-card glass">
+                    <div class="feature-icon">📱</div>
+                    <h3>Pour les Modérateurs</h3>
+                    <p>Validez les événements des entreprises et modérez les évaluations signalées.</p>
+                </div>
+
+                <div class="feature-card glass">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Rôles Différenciés</h3>
+                    <p>Accès personnalisés selon votre profil avec des droits spécifiques.</p>
+                </div>
+
+                <div class="feature-card glass">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Validation des Événements</h3>
+                    <p>Seules les entreprises vérifiées et AbeLink peuvent créer des événements.</p>
+                </div>
+
+                <div class="feature-card glass">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Analytics Complets</h3>
+                    <p>Tableaux de bord détaillés pour mesurer l'impact inclusif.</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="footer">
+        <div class="container">
+            <footer class="glass">
+                <div class="footer-content">
+                    <div class="footer-links">
+                        <a href="index.html">Accueil</a>
+                        <a href="#">Politique de confidentialité</a>
+                        <a href="#">Conditions d'utilisation</a>
+                        <a href="evaluations-evenements.html">Événements</a>
+                    </div>
+                    <div class="copyright">
+                        &copy; 2025 AbeLink. Tous droits réservés. Module de Gestion des Événements Inclusifs.
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const data = loadStore();
+            window.EVENTS = data.events;
+            window.COMPANIES = data.companies;
+            window.CURRENT_USER_ROLE = loadUserRole();
+            
+            document.getElementById('roleSelect').value = window.CURRENT_USER_ROLE;
+            updateUIForRole();
+            
+            renderHomeStats();
+        });
+
+        function renderHomeStats() {
+            const totalEvents = window.EVENTS.length;
+            const totalParticipants = window.EVENTS.reduce((sum, event) => sum + (event.participations ? event.participations.length : 0), 0);
+            
+            let totalAccess = 0;
+            let ratedEvents = 0;
+            window.EVENTS.forEach(event => {
+                const rating = calculateEventRating(event);
+                if (rating.access > 0) {
+                    totalAccess += rating.access;
+                    ratedEvents++;
+                }
+            });
+            const avgAccessibility = ratedEvents > 0 ? (totalAccess / ratedEvents).toFixed(1) : 0;
+            
+            const pendingModeration = window.EVENTS.reduce((count, event) => {
+                if (event.evaluations) {
+                    return count + event.evaluations.filter(e => e.etat_moderation === 'En attente').length;
+                }
+                return count;
+            }, 0);
+            
+            document.getElementById('totalEvents').textContent = totalEvents;
+            document.getElementById('totalParticipants').textContent = totalParticipants;
+            document.getElementById('avgAccessibility').textContent = avgAccessibility;
+            document.getElementById('pendingModeration').textContent = pendingModeration;
+        }
+    </script>
+</body>
+</html>
