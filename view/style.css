@@ -1,0 +1,203 @@
+@charset "utf-8";
+/* TemplateMo 592 Glossy Touch - Login Page */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(
+        135deg,
+        #0c0c0c 0%,
+        #1a1a2e 15%,
+        #16213e 35%,
+        #0f3460 50%,
+        #533a7d 70%,
+        #8b5a8c 85%,
+        #a0616a 100%
+    );
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Animated background shapes */
+.bg-shapes {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.08);
+    animation: float 6s ease-in-out infinite;
+    box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
+}
+
+.shape:nth-child(1) { width: 120px; height: 80px; border-radius: 15px; top: 20%; left: 10%; animation-delay: 0s; transform: rotate(15deg);}
+.shape:nth-child(2) { width: 90px; height: 140px; border-radius: 12px; top: 60%; right: 15%; animation-delay: 2s; transform: rotate(-20deg);}
+.shape:nth-child(3) { width: 100px; height: 60px; border-radius: 10px; bottom: 20%; left: 20%; animation-delay: 4s; transform: rotate(25deg);}
+.shape:nth-child(4) { width: 80px; height: 120px; border-radius: 8px; top: 10%; right: 30%; animation-delay: 1s; transform: rotate(-10deg);}
+.shape:nth-child(5) { width: 110px; height: 70px; border-radius: 14px; bottom: 40%; right: 20%; animation-delay: 3s; transform: rotate(30deg);}
+.shape:nth-child(6) { width: 95px; height: 95px; border-radius: 20px; top: 40%; left: 5%; animation-delay: 5s; transform: rotate(-15deg);}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(var(--start-rotation, 0deg)); }
+    50% { transform: translateY(-20px) rotate(calc(var(--start-rotation, 0deg) + 180deg)); }
+}
+
+/* Glass container */
+.glass {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.glass:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.15);
+}
+
+/* Header */
+header { padding: 20px; }
+.container { max-width: 1400px; margin: 0 auto; }
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 45px;
+}
+
+.logo {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+}
+
+.logo-icon { width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; }
+.logo-icon img { width: 100%; height: auto; }
+
+.nav-links { display: flex; gap: 30px; }
+.nav-links a {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+}
+.nav-links a:hover, .nav-links a.active {
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Login Page */
+.page { display: none; min-height: 100vh; padding: 40px 20px 20px; }
+.page.active { display: block; }
+
+.content-wrapper { min-height: calc(100vh - 300px); display: flex; justify-content: center; align-items: center; }
+
+.auth-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    color: white;
+}
+
+.auth-form h2 { font-size: 2rem; margin-bottom: 15px; }
+.auth-form p { font-size: 1rem; margin-bottom: 25px; color: rgba(255,255,255,0.9); }
+
+.form-group { margin-bottom: 20px; text-align: left; }
+.form-group label { display: block; margin-bottom: 8px; color: rgba(255,255,255,0.9); font-weight: 500; }
+.form-group input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 16px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+.form-group input:focus {
+    outline: none;
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.4);
+    box-shadow: 0 0 20px rgba(255,255,255,0.1);
+}
+.form-group input::placeholder { color: rgba(255,255,255,0.6); }
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+.form-options input { margin-right: 5px; }
+.form-options a { color: rgba(255,255,255,0.8); text-decoration: underline; }
+
+button[type="submit"], .cta-button {
+    width: 100%;
+    padding: 15px;
+    border-radius: 50px;
+    border: 2px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+button[type="submit"]:hover, .cta-button:hover {
+    background: rgba(255,255,255,0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.auth-switch { margin-top: 20px; font-size: 14px; }
+.auth-switch a { color: rgba(255,255,255,0.8); text-decoration: underline; }
+
+/* Footer */
+#footer { margin-top: 5px; padding: 20px 0; }
+footer.glass { padding: 30px; border-radius: 20px; }
+.footer-links { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 20px; }
+.footer-links a { color: rgba(255,255,255,0.7); font-size: 14px; transition: color 0.3s; }
+.footer-links a:hover { color: white; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+.copyright { font-size: 14px; color: rgba(255,255,255,0.6); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+.copyright a { color: rgba(255,255,255,0.6); text-decoration: none; }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .content-wrapper { min-height: auto; padding: 20px; }
+    .auth-form { padding: 30px; }
+    nav { flex-direction: column; gap: 20px; padding: 20px 30px; }
+    .nav-links { flex-direction: column; align-items: center; gap: 15px; }
+    .nav-links a { width: 100%; max-width: 200px; text-align: center; font-size: 14px; padding: 10px 20px; }
+    .logo-icon { width: 40px; height: 40px; }
+    .logo { font-size: 22px; }
+    button[type="submit"], .cta-button { width: 100%; }
+}
