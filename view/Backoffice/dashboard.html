@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord - AbeLink</title>
+    <link rel="stylesheet" href="shared.css">
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    
+    <header>
+        <div class="container">
+            <nav class="glass">
+                <div class="logo" onclick="window.location.href='index.html'">
+                    <div class="logo-icon">AL</div>
+                    <span>AbeLink — Événements Inclusifs</span>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div class="nav-links">
+                        <a href="../FrontOffice/index.html">Accueil</a>
+                        <a href="../FrontOffice/evaluations-evenements.html">Évaluations & Événements</a>
+                        <a href="#" id="moderationLink" style="display: none;">Modération</a>
+                        <a href="../Backoffice/dashboard.html" class="active">Tableau de bord</a>
+                    </div>
+                    <div class="role-selector">
+                        <select id="roleSelect" class="input" style="width: 150px;" onchange="changeUserRole()">
+                            <option value="user">Utilisateur</option>
+                            <option value="company">Entreprise</option>
+                            <option value="inclusion">Responsable Inclusion</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                        <div id="roleBadge" class="role-badge user">Utilisateur</div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+   
+    <div class="container">
+        <div class="content-wrapper">
+            <section class="hero glass">
+                <h1>Tableau de Bord Analytics</h1>
+                <p>Statistiques globales et indicateurs de performance inclusive.</p>
+            </section>
+
+            <section class="stats" style="margin-top: 20px;">
+                <div class="stat-card glass">
+                    <div class="stat-number" id="dashboardTotalEvents">0</div>
+                    <div class="stat-label">Événements total</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-number" id="dashboardTotalParticipants">0</div>
+                    <div class="stat-label">Participations totales</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-number" id="dashboardAvgAccess">0.0</div>
+                    <div class="stat-label">Moyenne accessibilité</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-number" id="dashboardAvgInclusion">0.0</div>
+                    <div class="stat-label">Moyenne inclusion</div>
+                </div>
+            </section>
+
+            <section style="margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="glass" style="padding: 20px;">
+                    <h3 style="margin-bottom: 15px;">Événements par entreprise</h3>
+                    <div id="eventsByCompanyChart">
+                       
+                    </div>
+                </div>
+                <div class="glass" style="padding: 20px;">
+                    <h3 style="margin-bottom: 15px;">Top entreprises par note</h3>
+                    <div id="topCompaniesChart">
+                        
+                    </div>
+                </div>
+            </section>
+
+            <section style="margin-top: 40px;">
+                <h3 style="margin-bottom: 15px;">Derniers événements créés</h3>
+                <div id="recentEventsList" class="grid">
+                </div>
+            </section>
+
+            <section style="margin-top: 40px;">
+                <h3 style="margin-bottom: 15px;">Évaluations récentes</h3>
+                <div id="recentEvaluationsList" class="grid">
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <div id="footer">
+        <div class="container">
+            <footer class="glass">
+                <div class="footer-content">
+                    <div class="footer-links">
+                        <a href="index.html">Accueil</a>
+                        <a href="#">Politique de confidentialité</a>
+                        <a href="#">Conditions d'utilisation</a>
+                        <a href="evaluations-evenements.html">Événements</a>
+                    </div>
+                    <div class="copyright">
+                        &copy; 2025 AbeLink. Tous droits réservés. Module de Gestion des Événements Inclusifs.
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="shared.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const data = loadStore();
+            window.EVENTS = data.events;
+            window.COMPANIES = data.companies;
+            window.CURRENT_USER_ROLE = loadUserRole();
+            
+            document.getElementById('roleSelect').value = window.CURRENT_USER_ROLE;
+            updateUIForRole();
+            
+            if (window.CURRENT_USER_ROLE !== 'admin') {
+                alert('Accès réservé aux administrateurs.');
+                window.location.href = 'index.html';
+                return;
+            }
+            
+            renderDashboard();
+        });
+
+        function renderDashboard() {
+            const totalEvents = window.EVENTS.length;
+            const totalParticipants = window.EVENTS.reduce((sum, event) => sum + (event.participations ? event.participations.filter(p => p.etat_inscription === 'Confirmée').length : 0), 0);
+            
+            let totalAccess = 0, totalInclusion = 0, ratedEvents = 0;
+            window.EVENTS.forEach(event => {
+                const rating = calculateEventRating(event);
+                if (rating.access > 0) {
+                    totalAccess += rating.access;
+                    totalInclusion += rating.inclusion;
+                    ratedEvents++;
+                }
+            });
+            
+            const avgAccess = ratedEvents > 0 ? (totalAccess / ratedEvents).toFixed(1) : 0;
+            const avgInclusion = ratedEvents > 0 ? (totalInclusion / ratedEvents).toFixed(1) : 0;
+            
+            document.getElementById('dashboardTotalEvents').textContent = totalEvents;
+            document.getElementById('dashboardTotalParticipants').textContent = totalParticipants;
+            document.getElementById('dashboardAvgAccess').textContent = avgAccess;
+            document.getElementById('dashboardAvgInclusion').textContent = avgInclusion;
+            
+            renderEventsByCompanyChart();
+            renderTopCompaniesChart();
+            renderRecentEvents();
+            renderRecentEvaluations();
+        }
+
+        function renderEventsByCompanyChart() {
+            const companyEvents = {};
+            
+            window.EVENTS.forEach(event => {
+                const companyName = getCompanyName(event.createur_id);
+                if (!companyEvents[companyName]) {
+                    companyEvents[companyName] = 0;
+                }
+                companyEvents[companyName]++;
+            });
+            
+            const chartHTML = `
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    ${Object.entries(companyEvents).map(([company, count]) => `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 120px; text-align: right; font-size: 12px;">${company}:</div>
+                            <div style="flex: 1; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                                <div style="height: 20px; background: var(--accent); width: ${Math.max((count / window.EVENTS.length) * 100, 5)}%;"></div>
+                            </div>
+                            <div style="width: 30px; text-align: right; font-size: 12px;">${count}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('eventsByCompanyChart').innerHTML = chartHTML;
+        }
+
+        function renderTopCompaniesChart() {
+            const companyRatings = {};
+            
+            window.EVENTS.forEach(event => {
+                const companyId = event.createur_id;
+                if (event.createur_type !== 'entreprise') return;
+                
+                const rating = calculateEventRating(event);
+                if (rating.access > 0) {
+                    if (!companyRatings[companyId]) {
+                        companyRatings[companyId] = { access: 0, inclusion: 0, count: 0 };
+                    }
+                    companyRatings[companyId].access += rating.access;
+                    companyRatings[companyId].inclusion += rating.inclusion;
+                    companyRatings[companyId].count++;
+                }
+            });
+            
+            const companyAverages = Object.entries(companyRatings).map(([companyId, data]) => {
+                const company = getCompanyById(companyId);
+                const avgRating = ((data.access + data.inclusion) / (2 * data.count)).toFixed(1);
+                return {
+                    name: company ? company.nom : 'Entreprise inconnue',
+                    rating: parseFloat(avgRating),
+                    events: data.count
+                };
+            }).sort((a, b) => b.rating - a.rating).slice(0, 5);
+            
+            const chartHTML = `
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    ${companyAverages.map(company => `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 120px; text-align: right; font-size: 12px;">${company.name}:</div>
+                            <div style="flex: 1; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden;">
+                                <div style="height: 20px; background: var(--success); width: ${(company.rating / 5) * 100}%;"></div>
+                            </div>
+                            <div style="width: 30px; text-align: right; font-size: 12px;">${company.rating}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            document.getElementById('topCompaniesChart').innerHTML = companyAverages.length > 0 ? chartHTML : '<div class="muted">Aucune donnée d\'évaluation disponible.</div>';
+        }
+
+        function renderRecentEvents() {
+            const recentEventsList = document.getElementById('recentEventsList');
+            const recentEvents = window.EVENTS
+                .sort((a, b) => new Date(b.date_evenement) - new Date(a.date_evenement))
+                .slice(0, 3);
+            
+            recentEventsList.innerHTML = '';
+            
+            if (recentEvents.length === 0) {
+                recentEventsList.innerHTML = '<div class="muted">Aucun événement récent.</div>';
+                return;
+            }
+            
+            recentEvents.forEach(event => {
+                const company = getCompanyById(event.createur_id);
+                const rating = calculateEventRating(event);
+                
+                const div = document.createElement('div');
+                div.className = 'event-card glass';
+                
+                div.innerHTML = `
+                    <div class="event-title">${escapeHtml(event.titre)}</div>
+                    <div class="company-info">
+                        <div class="company-logo">${company ? company.nom.charAt(0) : 'E'}</div>
+                        <div class="company-name">${company ? company.nom : 'AbeLink'}</div>
+                    </div>
+                    <div class="meta">${formatDate(event.date_evenement)} • ${escapeHtml(event.lieu)}</div>
+                    <div class="small">${truncate(escapeHtml(event.description || ''), 100)}</div>
+                    
+                    <div class="tags">
+                        ${event.accessibilite.slice(0, 2).map(acc => `<span class="tag">${escapeHtml(acc)}</span>`).join('')}
+                        ${event.accessibilite.length > 2 ? `<span class="tag">+${event.accessibilite.length - 2}</span>` : ''}
+                        <span class="tag status ${event.statut.toLowerCase()}">${event.statut}</span>
+                    </div>
+                    
+                    <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <div class="stars">${renderStars(rating.access)} <span class="avg">${rating.access || '—'}</span></div>
+                        <div class="small">${event.inscrits} participants</div>
+                    </div>
+                `;
+                
+                recentEventsList.appendChild(div);
+            });
+        }
+
+        function renderRecentEvaluations() {
+            const recentEvaluationsList = document.getElementById('recentEvaluationsList');
+            
+            const allEvaluations = [];
+            window.EVENTS.forEach(event => {
+                if (event.evaluations && event.evaluations.length > 0) {
+                    event.evaluations.forEach(evaluation => {
+                        allEvaluations.push({
+                            ...evaluation,
+                            eventTitre: event.titre,
+                            eventDate: event.date_evenement,
+                            companyName: getCompanyName(event.createur_id)
+                        });
+                    });
+                }
+            });
+            
+            const recentEvaluations = allEvaluations
+                .sort((a, b) => new Date(b.date_evaluation) - new Date(a.date_evaluation))
+                .slice(0, 4);
+            
+            recentEvaluationsList.innerHTML = '';
+            
+            if (recentEvaluations.length === 0) {
+                recentEvaluationsList.innerHTML = '<div class="muted">Aucune évaluation récente.</div>';
+                return;
+            }
+            
+            recentEvaluations.forEach(evaluation => {
+                const div = document.createElement('div');
+                div.className = 'event-card glass';
+                
+                div.innerHTML = `
+                    <div class="event-title">${escapeHtml(evaluation.eventTitre)}</div>
+                    <div class="company-info">
+                        <div class="company-logo">${evaluation.companyName.charAt(0)}</div>
+                        <div class="company-name">${evaluation.companyName}</div>
+                    </div>
+                    <div class="meta">Évalué le ${formatDate(evaluation.date_evaluation)}</div>
+                    
+                    <div style="display: flex; gap: 15px; margin-top: 10px;">
+                        <div>
+                            <div class="small">Accessibilité</div>
+                            <div class="stars">${renderStars(evaluation.note_accessibilite)} <span class="avg">${evaluation.note_accessibilite}/5</span></div>
+                        </div>
+                        <div>
+                            <div class="small">Inclusion</div>
+                            <div class="stars">${renderStars(evaluation.note_inclusion)} <span class="avg">${evaluation.note_inclusion}/5</span></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 10px; font-size: 13px;">${truncate(escapeHtml(evaluation.commentaire || 'Aucun commentaire'), 80)}</div>
+                    
+                    <div class="tags" style="margin-top: 10px;">
+                        <span class="tag status ${evaluation.etat_moderation === 'Visible' ? 'publie' : 
+                            evaluation.etat_moderation === 'En attente' ? 'brouillon' : 'archive'}">
+                            ${evaluation.etat_moderation}
+                        </span>
+                        ${evaluation.signalee ? '<span class="tag" style="background: rgba(255, 107, 107, 0.2); color: var(--danger);">Signalée</span>' : ''}
+                    </div>
+                `;
+                
+                recentEvaluationsList.appendChild(div);
+            });
+        }
+
+        window.changeUserRole = changeUserRole;
+    </script>
+</body>
+</html>
