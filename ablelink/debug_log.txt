@@ -1,0 +1,212 @@
+--- REQUEST 2025-12-11 07:04:34 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 07:08:00 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 07:14:55 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 07:15:15 ---
+Params: q='Mon parcours en tant que développeur web', status='', author='', cat=''
+Total stories: 4
+Filtering by Q: 'Mon parcours en tant que développeur web'
+  ID 15 ('rr') vs 'Mon parcours en tant que développeur web': NO
+  ID 14 (',j') vs 'Mon parcours en tant que développeur web': NO
+  ID 12 ('La vue basse n'arrête pas l'ambition en marketing') vs 'Mon parcours en tant que développeur web': NO
+  ID 9 ('Mon parcours en tant que développeur web') vs 'Mon parcours en tant que développeur web': MATCH
+Final count: 1
+--- REQUEST 2025-12-11 07:18:34 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 07:20:33 ---
+Params: q=',j', status='', author='', cat=''
+Total stories: 4
+Filtering by Q: ',j'
+  ID 15 ('rr') vs ',j': NO
+  ID 14 (',j') vs ',j': MATCH
+  ID 12 ('La vue basse n'arrête pas l'ambition en marketing') vs ',j': NO
+  ID 9 ('Mon parcours en tant que développeur web') vs ',j': NO
+Final count: 1
+--- REQUEST 2025-12-11 10:02:00 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 11:21:54 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 11:21:56 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 11:24:17 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 11:31:18 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 14:54:54 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-11 14:55:08 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 21:28:47 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 21:32:51 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 21:34:07 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 21:40:22 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 21:49:22 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 21:52:56 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 21:57:43 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 21:59:10 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 21:59:14 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 23:05:47 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 23:14:58 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-12 23:15:08 ---
+Params: q='', status='', author='', cat=''
+Total stories: 4
+Final count: 4
+--- REQUEST 2025-12-13 15:35:37 ---
+Params: q='', status='', author='', cat=''
+Total stories: 0
+Final count: 0
+--- REQUEST 2025-12-13 15:38:34 ---
+Params: q='', status='', author='', cat=''
+Total stories: 0
+Final count: 0
+--- REQUEST 2025-12-13 15:38:36 ---
+Params: q='', status='', author='', cat=''
+Total stories: 0
+Final count: 0
+--- REQUEST 2025-12-13 15:38:42 ---
+Params: q='', status='', author='', cat=''
+Total stories: 0
+Final count: 0
+--- REQUEST 2025-12-13 17:52:50 ---
+Params: q='', status='', author='', cat=''
+Total stories: 5
+Final count: 5
+--- REQUEST 2025-12-13 17:53:02 ---
+Params: q='', status='', author='', cat=''
+Total stories: 5
+Final count: 5
+--- REQUEST 2025-12-13 17:53:08 ---
+Params: q='Reprise de confiance', status='', author='', cat=''
+Total stories: 5
+Filtering by Q: 'Reprise de confiance'
+  ID 5 ('Reprise de confiance') vs 'Reprise de confiance': MATCH
+  ID 1 ('Mon Premier Emploi grâce à AbleLink') vs 'Reprise de confiance': NO
+  ID 2 ('De Chômeur à Développeur Web') vs 'Reprise de confiance': NO
+  ID 3 ('Reconversion Professionnelle Réussie') vs 'Reprise de confiance': NO
+  ID 4 ('Histoire en Attente de Validation') vs 'Reprise de confiance': NO
+Final count: 1
+--- REQUEST 2025-12-13 17:53:10 ---
+Params: q='', status='', author='', cat=''
+Total stories: 5
+Final count: 5
+--- REQUEST 2025-12-13 18:03:07 ---
+Params: q='', status='', author='', cat=''
+Total stories: 5
+Final count: 5
+--- REQUEST 2025-12-13 18:03:16 ---
+Params: q='', status='', author='', cat=''
+Total stories: 5
+Final count: 5
+--- REQUEST 2025-12-13 18:03:45 ---
+Params: q='', status='', author='', cat=''
+Total stories: 5
+Final count: 5
+--- REQUEST 2025-12-13 18:42:02 ---
+Params: q='', status='', author='', cat=''
+Total stories: 7
+Final count: 7
+--- REQUEST 2025-12-15 16:58:12 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-15 17:09:42 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-15 17:09:44 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-15 17:09:46 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-15 17:10:03 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-15 17:10:03 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-15 17:10:03 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-16 13:06:07 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-16 13:08:46 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-16 16:43:48 ---
+Params: q='', status='', author='', cat=''
+Total stories: 9
+Final count: 9
+--- REQUEST 2025-12-16 18:08:06 ---
+Params: q='', status='', author='', cat=''
+Total stories: 5
+Final count: 5
+--- REQUEST 2025-12-16 18:08:18 ---
+Params: q='', status='', author='', cat=''
+Total stories: 5
+Final count: 5

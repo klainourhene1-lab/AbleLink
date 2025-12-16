@@ -1,0 +1,159 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+COPIER TOUT LE CODE CI-DESSOUS ET LE COLLER DANS phpMyAdmin
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ETAPES:
+1. Ouvrir http://localhost/phpmyadmin
+2. Cliquer sur "SQL" (menu du haut)
+3. Coller TOUT ce code dans la zone de texte
+4. Cliquer "Exécuter"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+START CODE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+-- Créer la base de données
+CREATE DATABASE IF NOT EXISTS ablelink_db;
+USE ablelink_db;
+
+-- Table pour les Success Stories
+CREATE TABLE IF NOT EXISTS success_stories (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    category VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    image VARCHAR(255),
+    likes INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Table pour les Commentaires
+CREATE TABLE IF NOT EXISTS comments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    story_id INT NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    comment_text TEXT NOT NULL,
+    likes INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (story_id) REFERENCES success_stories(id) ON DELETE CASCADE
+);
+
+-- Données d'exemple pour tester
+INSERT INTO success_stories (title, author, category, description, image) VALUES
+('De la Formation à l''Emploi', 'Ahmed Ben Ali', 'Career Growth', 'J''ai trouvé mon premier travail grâce à AbleLink après 2 ans de recherche. L''équipe m''a aidé à préparer mon CV et mes entretiens.', 'img/story1.jpg'),
+('Succès dans le Secteur IT', 'Fatima Khadra', 'Technology', 'Aujourd''hui, je suis développeuse web dans une entreprise inclusive. Un vrai rêve devenu réalité!', 'img/story2.jpg');
+
+INSERT INTO comments (story_id, author, comment_text) VALUES
+(1, 'Utilisateur 1', 'Bravo! C''est une belle histoire inspirante.'),
+(1, 'Utilisateur 2', 'Merci de partager ton expérience, cela m''encourage beaucoup.');
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+END CODE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ APRES AVOIR EXECUTE:
+   • 1 base de données créée: ablelink_db
+   • 2 tables créées: success_stories, comments
+   • 2 histoires d'exemple
+   • 2 commentaires d'exemple
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+EXPLICATION DE CHAQUE LIGNE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. CREATE DATABASE IF NOT EXISTS ablelink_db;
+   → Crée la base de données nommée "ablelink_db"
+   → "IF NOT EXISTS" = si elle n'existe pas déjà
+
+2. USE ablelink_db;
+   → Utilise la base ablelink_db pour les commandes suivantes
+
+3. CREATE TABLE IF NOT EXISTS success_stories (...)
+   → Crée la table "success_stories" avec ces colonnes:
+      • id: Numéro unique (clé primaire, auto-incrémenté)
+      • title: Titre de l'histoire (255 caractères max)
+      • author: Nom de l'auteur (255 caractères max)
+      • category: Catégorie (Career Growth, Technology, etc)
+      • description: Description complète (texte long)
+      • image: URL de l'image
+      • likes: Nombre de likes (commence à 0)
+      • created_at: Date de création (auto)
+      • updated_at: Date de modification (auto)
+
+4. CREATE TABLE IF NOT EXISTS comments (...)
+   → Crée la table "comments" avec ces colonnes:
+      • id: Numéro unique
+      • story_id: Référence à une story (FK = Foreign Key)
+      • author: Nom du commentateur
+      • comment_text: Texte du commentaire
+      • likes: Nombre de likes
+      • created_at: Date de création
+      • FOREIGN KEY: Lien avec success_stories (suppression en cascade)
+
+5. INSERT INTO success_stories...
+   → Ajoute 2 histoires d'exemple
+
+6. INSERT INTO comments...
+   → Ajoute 2 commentaires sur la première histoire
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STRUCTURE DES TABLES CREEES:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TABLE: success_stories
+┌─────────────┬─────────────┬──────────────────────────────────┐
+│ Colonne     │ Type        │ Description                      │
+├─────────────┼─────────────┼──────────────────────────────────┤
+│ id          │ INT         │ Clé primaire, auto-incrémenté   │
+│ title       │ VARCHAR(255)│ Titre de l'histoire              │
+│ author      │ VARCHAR(255)│ Nom de l'auteur                  │
+│ category    │ VARCHAR(100)│ Catégorie (Career, Tech, etc)   │
+│ description │ TEXT        │ Description complète             │
+│ image       │ VARCHAR(255)│ URL de l'image                   │
+│ likes       │ INT         │ Compteur de likes (défaut: 0)   │
+│ created_at  │ TIMESTAMP   │ Date de création (auto)          │
+│ updated_at  │ TIMESTAMP   │ Date de modification (auto)      │
+└─────────────┴─────────────┴──────────────────────────────────┘
+
+TABLE: comments
+┌──────────────┬─────────────┬──────────────────────────────────┐
+│ Colonne      │ Type        │ Description                      │
+├──────────────┼─────────────┼──────────────────────────────────┤
+│ id           │ INT         │ Clé primaire, auto-incrémenté   │
+│ story_id     │ INT         │ Clé étrangère → success_stories │
+│ author       │ VARCHAR(255)│ Nom du commentateur              │
+│ comment_text │ TEXT        │ Texte du commentaire             │
+│ likes        │ INT         │ Compteur de likes (défaut: 0)   │
+│ created_at   │ TIMESTAMP   │ Date de création (auto)          │
+└──────────────┴─────────────┴──────────────────────────────────┘
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VERIFICATION APRES EXECUTION:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Dans phpMyAdmin, à gauche, cliquer sur "ablelink_db"
+2. Vous devez voir:
+   ✅ success_stories (avec 2 lignes d'exemple)
+   ✅ comments (avec 2 lignes d'exemple)
+
+Cliquer sur "success_stories" → Parcourir:
+┌──┬────────────────────────┬───────────────┬────────────┬────────┐
+│id│title                   │author         │category    │likes   │
+├──┼────────────────────────┼───────────────┼────────────┼────────┤
+│1 │De la Formation à...    │Ahmed Ben Ali  │Career...   │0       │
+│2 │Succès dans le...       │Fatima Khadra  │Technology  │0       │
+└──┴────────────────────────┴───────────────┴────────────┴────────┘
+
+Cliquer sur "comments" → Parcourir:
+┌──┬──────────┬──────────────┬────────────────────────────┬────────┐
+│id│story_id  │author        │comment_text                │likes   │
+├──┼──────────┼──────────────┼────────────────────────────┼────────┤
+│1 │1         │Utilisateur 1 │Bravo! C'est une belle...   │0       │
+│2 │1         │Utilisateur 2 │Merci de partager...        │0       │
+└──┴──────────┴──────────────┴────────────────────────────┴────────┘
+
+🎉 SUCCES! Les tables sont créées et fonctionnelles!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
