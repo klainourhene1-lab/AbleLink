@@ -247,7 +247,7 @@ Si vous souhaitez rejoindre notre équipe et contribuer à ce projet académique
 |--------------|------|--------|
 | [nourhene klai ] | 🎯 Développement Principal | [nourhene](https://github.com/klainourhene1-lab) |
 | [mohammed amine challouf] | 🔧 Backend & Base de Données | [amine](https://github.com/AmineChallouf) |
-| [malek jafrar] | 🎨 Frontend & Interface Utilisateur | [malek](https://github.com/malekjafrar) |
+| [malek jafrar] | 🎨 Frontend & Interface Utilisateur | [malek](https://github.com/malek-225) |
 | [iness misaoui] | 🧪 Tests & Documentation | [iness](https://github.com/inessmisoui) 
 | [adem friaa] | 🧪 Tests & Documentation | [adem](https://github.com/ademfriaa) ||
 
@@ -261,7 +261,7 @@ Nous accueillons les contributions de tous les niveaux ! Voici comment vous pouv
 
 **Fork le repository**
 ```bash
-# Accédez à https://github.com/ablelink/yerabby
+# Accédez à (https://github.com/klainourhene1-lab/AbleLink)
 # Cliquez sur "Fork" en haut à droite
 ```
 
