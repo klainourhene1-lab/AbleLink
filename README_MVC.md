@@ -245,8 +245,8 @@ Si vous souhaitez rejoindre notre équipe et contribuer à ce projet académique
 
 | Contributeur | Rôle | GitHub |
 |--------------|------|--------|
-| [nourhene klai ] | 🎯 Développement Principal | [@nourhene](https://github.com/nourheneklai) |
-| [mohammed amine challouf] | 🔧 Backend & Base de Données | [amine](https://github.com/mohammedaminechallouf) |
+| [nourhene klai ] | 🎯 Développement Principal | [nourhene](https://github.com/klainourhene1-lab) |
+| [mohammed amine challouf] | 🔧 Backend & Base de Données | [amine](https://github.com/AmineChallouf) |
 | [malek jafrar] | 🎨 Frontend & Interface Utilisateur | [malek](https://github.com/malekjafrar) |
 | [iness misaoui] | 🧪 Tests & Documentation | [iness](https://github.com/inessmisoui) 
 | [adem friaa] | 🧪 Tests & Documentation | [adem](https://github.com/ademfriaa) ||
