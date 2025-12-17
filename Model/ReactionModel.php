@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../Control/config.php';
+require_once __DIR__ . '/../Controller/config.php';
 
 class ReactionModel {
     private $pdo;

@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 // Optionally check role if you want to restrict to strict "Enterprise" role
 // if ($_SESSION['user_role'] !== 'Enterprise') { ... }
 
-require_once __DIR__ . '/../../Control/OffreController.php';
+require_once __DIR__ . '/../../Controller/OffreController.php';
 $offreCtrl = new OffreController();
 $myOffers = $offreCtrl->getMyOffers();
 ?>

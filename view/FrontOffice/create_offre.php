@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/UserController.php';
-require_once __DIR__ . '/../../Control/OffreController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
+require_once __DIR__ . '/../../Controller/OffreController.php';
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {

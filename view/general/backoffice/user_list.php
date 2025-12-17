@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../../../Control/config.php';
-require_once __DIR__ . '/../../../Control/UserController.php';
+require_once __DIR__ . '/../../../Controller/config.php';
+require_once __DIR__ . '/../../../Controller/UserController.php';
 require_once __DIR__ . '/../../../Model/User.php';
 $controller = new UserController();
 
@@ -352,7 +352,7 @@ $currentSubPage = 'list';
     </div>
 
     <div class="nav-links">
-        <a href="../../../Control/admin_dashboard.php" class="nav-link"><i class="fas fa-home"></i> Tableau de Bord</a>
+        <a href="../../../Controller/admin_dashboard.php" class="nav-link"><i class="fas fa-home"></i> Tableau de Bord</a>
 
         <div class="nav-link active"><i class="fas fa-users"></i> Utilisateurs</div>
 

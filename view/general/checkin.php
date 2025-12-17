@@ -12,7 +12,7 @@ if (!$participationId || !$eventId) {
 }
 
 // Database connection
-require_once __DIR__ . '/../../Model/Database.php';
+require_once __DIR__ . '/../Controller/config.php';
 
 $db = Database::getInstance()->getConnection();
 
@@ -294,7 +294,7 @@ try {
                 <a href="../FrontOffice/evaluations-evenements.php" class="btn btn-primary">
                     Voir tous les événements
                 </a>
-                <a href="../../Control/historique.php" class="btn btn-secondary">
+                <a href="../../Controller/historique.php" class="btn btn-secondary">
                     Mon historique
                 </a>
             </div>

@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/UserController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
 require_once __DIR__ . '/../../Model/User.php';
 
 if (!isset($_SESSION['user_id'])) {
@@ -471,7 +471,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["photo"]) && $_FILES[
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="logo site-title">
-                <a href="../../Control/admin_dashboard.php" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
+                <a href="../../Controller/admin_dashboard.php" style="text-decoration:none; display:flex; align-items:center; gap:10px;">
                     <span class="letter-a">A</span>
                     <span class="letter-b">B</span>
                     <span class="letter-l">L</span>
@@ -481,7 +481,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["photo"]) && $_FILES[
             </div>
 
             <div class="nav-links">
-                <a href="../../Control/admin_dashboard.php" class="nav-link">
+                <a href="../../Controller/admin_dashboard.php" class="nav-link">
                     <i class="fas fa-home"></i>
                     <span>Tableau de Bord</span>
                 </a>

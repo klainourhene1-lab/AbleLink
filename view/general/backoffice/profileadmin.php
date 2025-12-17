@@ -1,8 +1,8 @@
 
 <?php
 session_start();
-require_once __DIR__ . '/../../../Control/config.php';
-require_once __DIR__ . '/../../../Control/UserController.php';
+require_once __DIR__ . '/../../../Controller/config.php';
+require_once __DIR__ . '/../../../Controller/UserController.php';
 require_once __DIR__ . '/../../../Model/User.php';
 
 if (!isset($_SESSION['user_id'])) {

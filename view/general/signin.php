@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../Control/UserController.php';
-require_once __DIR__ . '/../../Model/User.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
+require_once __DIR__ . '/../../Controller/config.php';
 
 
 $errors = [];
@@ -76,7 +76,7 @@ if (isset($_POST['remember'])) {
                 // ----------- REDIRECTION BY ROLE ------------
                 switch($_SESSION['user_role']) {
                     case "Admin":
-                        header("Location: ../../Control/admin_dashboard.php");
+                        header("Location: ../../Controller/admin_dashboard.php");
                         exit;
 
                     case "Entreprise":

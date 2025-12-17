@@ -41,6 +41,9 @@ try {
         case 'like_story':
              $controller->likeStory();
              break;
+        case 'get_story':
+             $controller->getStory();
+             break;
         case 'like':
              if (isset($_GET['id'])) {
                  $id = $_GET['id'];

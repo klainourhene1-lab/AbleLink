@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 $eventId = $_GET['eventId'] ?? null;
 
 if (!$eventId) {
-    header('Location: ../../Control/historique.php');
+    header('Location: ../../Controller/historique.php');
     exit;
 }
 
@@ -18,8 +18,8 @@ if (!$eventId) {
 $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['user_role'] ?? 'Utilisateur';
 
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/UserController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
 require_once __DIR__ . '/../../Model/User.php';
 
 $controller = new UserController();
@@ -382,7 +382,7 @@ $role_display_names = [
 
     <section class="services spad">
         <div class="container">
-            <a href="../../Control/historique.php" class="back-btn">
+            <a href="../../Controller/historique.php" class="back-btn">
                 <i class="fa fa-arrow-left"></i>
                 Retour à l'historique
             </a>
@@ -451,7 +451,7 @@ $role_display_names = [
         });
 
         function loadEventDetails() {
-            fetch(`../../Control/temoignages_api.php?action=get_event&eventId=${eventId}`)
+            fetch(`../../Controller/temoignages_api.php?action=get_event&eventId=${eventId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
@@ -526,7 +526,7 @@ $role_display_names = [
         }
 
         function loadEvaluations() {
-            fetch(`../../Control/temoignages_api.php?action=get_evaluations&eventId=${eventId}`)
+            fetch(`../../Controller/temoignages_api.php?action=get_evaluations&eventId=${eventId}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('loadingContainer').style.display = 'none';
@@ -649,7 +649,7 @@ $role_display_names = [
             const formData = new FormData();
             formData.append('evaluationId', currentEvaluationId);
             
-            fetch('../../Control/temoignages_api.php?action=report_evaluation', {
+            fetch('../../Controller/temoignages_api.php?action=report_evaluation', {
                 method: 'POST',
                 body: formData
             })

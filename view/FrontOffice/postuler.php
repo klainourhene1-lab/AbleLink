@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/CandidatureController.php';
-require_once __DIR__ . '/../../Control/OffreController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/CandidatureController.php';
+require_once __DIR__ . '/../../Controller/OffreController.php';
 
 $id_offre = $_GET['id_offre'] ?? $_POST['id_offre'] ?? null;
 if (!$id_offre) {

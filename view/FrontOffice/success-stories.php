@@ -2,9 +2,9 @@
 session_start();
 
 // Load necessary files
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/UserController.php';
-require_once __DIR__ . '/../../Control/StoryController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
+require_once __DIR__ . '/../../Controller/StoryController.php';
 require_once __DIR__ . '/../../Model/User.php';
 
 // Initialize Controllers
@@ -245,9 +245,9 @@ $cat = $_GET['cat'] ?? '';
                                 <li><a href="../../view/general/index.php">Accueil</a></li>
                                 <li class="active"><a href="success-stories.php">Success Stories</a></li>
                                 <?php if ($user_id): ?>
-                                    <li><a href="../../Control/historique_stories.php">Mon Historique</a></li>
+                                    <li><a href="../../Controller/historique_stories.php">Mon Historique</a></li>
                                     <?php if ($user_role === 'Admin'): ?>
-                                        <li><a href="../../Control/admin_dashboard.php">Administration</a></li>
+                                        <li><a href="../../Controller/admin_dashboard.php">Administration</a></li>
                                     <?php endif; ?>
                                 <?php endif; ?>
                             </ul>
@@ -409,7 +409,7 @@ $cat = $_GET['cat'] ?? '';
         function closeReadModal() { document.getElementById('readModal').style.display = 'none'; }
         
         function likeStory(id) {
-            fetch('../../Control/stories_handler.php?action=like_story', {
+            fetch('../../Controller/stories_handler.php?action=like_story', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ story_id: id })

@@ -1,7 +1,7 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../../Control/config.php';
-require_once __DIR__ . '/../../../Control/UserController.php';
+require_once __DIR__ . '/../../../Controller/config.php';
+require_once __DIR__ . '/../../../Controller/UserController.php';
 require_once __DIR__ . '/../../../Model/User.php';
 
 $errors = [];
@@ -552,7 +552,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </style>
 
             <div class="nav-links">
-                <a href="../../../Control/admin_dashboard.php" class="nav-link">
+                <a href="../../../Controller/admin_dashboard.php" class="nav-link">
                     <i class="fas fa-home"></i>
                     <span>Tableau de Bord</span>
                 </a>

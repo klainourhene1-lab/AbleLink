@@ -10,16 +10,16 @@ $content = file_get_contents($source);
 
 // Fix paths
 $replacements = [
-    "require_once __DIR__ . '/../../Control/" => "require_once __DIR__ . '/",
+    "require_once __DIR__ . '/../Controller/config.php';" => "require_once __DIR__ . '/",
     "require_once __DIR__ . '/../../Model/" => "require_once __DIR__ . '/../Model/",
     "'../../uploads/" => "'../uploads/",
     "'../general/" => "'../view/general/",
     'href="../general/' => 'href="../view/general/',
     'href="../../videograph-master/' => 'href="../videograph-master/',
-    'href="../../Control/' => 'href="',
+    'href="../../Controller/' => 'href="',
     'src="../../videograph-master/' => 'src="../videograph-master/',
-    'fetch(\'../../Control/' => 'fetch(\'',
-    'fetch(\'../Control/' => 'fetch(\'',
+    'fetch(\'../../Controller/' => 'fetch(\'',
+    'fetch(\'../Controller/' => 'fetch(\'',
     'url(../../' => 'url(../',
     'link rel="stylesheet" href="../../videograph-master/' => 'link rel="stylesheet" href="../videograph-master/',
 ];

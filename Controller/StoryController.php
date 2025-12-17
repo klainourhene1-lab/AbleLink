@@ -40,13 +40,41 @@ class StoryController {
 
             try {
                 $this->model->create($_SESSION['user_id'], $data);
-                header('Location: success-stories.php?success=1');
+                $redirect = $_POST['redirect_to'] ?? 'success-stories.php?success=1';
+                header("Location: $redirect");
                 exit;
             } catch (Exception $e) {
                 return "Erreur lors de la création: " . $e->getMessage();
             }
         }
         return null;
+    }
+
+    public function update() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update') {
+            if (!isset($_SESSION['user_id'])) { header('Location: ../general/signin.php'); exit; }
+            
+            $id = $_POST['id'];
+            $data = [
+                'title' => $_POST['title'],
+                'author' => $_POST['author_name'],
+                'content' => $_POST['content']
+            ];
+
+            $this->model->update($id, $_SESSION['user_id'], $data);
+            header("Location: historique_stories.php?updated=1");
+            exit;
+        }
+    }
+
+    public function delete() {
+        if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['id'])) {
+            if (!isset($_SESSION['user_id'])) { header('Location: ../general/signin.php'); exit; }
+            
+            $this->model->delete($_GET['id'], $_SESSION['user_id']);
+            header("Location: historique_stories.php?deleted=1");
+            exit;
+        }
     }
 
     public function like() {

@@ -8,9 +8,9 @@ if (!isset($_SESSION['user_id'])) {
 }
 
 // 2) Load Dependencies
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/UserController.php';
-require_once __DIR__ . '/../../Control/SocialController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
+require_once __DIR__ . '/../../Controller/SocialController.php';
 require_once __DIR__ . '/../../Model/User.php';
 
 $userController = new UserController();
@@ -307,7 +307,7 @@ function getPhoto($u) {
                                 <li><a href="index.php">Accueil</a></li>
                                 <!-- Links removed as requested -->
                                 <?php if ($user_role === 'Admin'): ?>
-                                    <li><a href="../../Control/admin_dashboard.php">Administration</a></li>
+                                    <li><a href="../../Controller/historique.php">Historique</a></li>
                                 <?php endif; ?>
                             </ul>
                         </nav>
@@ -635,7 +635,7 @@ function getPhoto($u) {
 
     // --- API HANDLER ---
     async function apiCall(action, data) {
-        const response = await fetch('../../Control/social_handler.php?action=' + action, {
+        const response = await fetch('../../Controller/social_handler.php?action=' + action, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)

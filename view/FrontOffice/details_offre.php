@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/UserController.php';
-require_once __DIR__ . '/../../Control/OffreController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
+require_once __DIR__ . '/../../Controller/OffreController.php';
 
 $controller = new OffreController();
 $offre = $controller->getDetails($_GET['id'] ?? null);
@@ -54,7 +54,7 @@ $js_role = $role_mapping[$user_role] ?? 'user';
                     <div class="header__nav__option">
                         <nav class="header__nav__menu mobile-menu">
                             <ul>
-                                <li><a href="../../view/general/index.php">Accueil</a></li>
+                                <li><a href="../../Controller/admin_dashboard.php">Administration</a></li>
                                 <li class="active"><a href="liste_offres.php">Offres d'Emploi</a></li>
                             </ul>
                         </nav>

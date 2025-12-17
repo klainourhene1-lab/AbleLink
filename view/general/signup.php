@@ -3,8 +3,8 @@ session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once __DIR__ . '/../../Control/UserController.php';
-require_once __DIR__ . '/../../Model/User.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
+require_once __DIR__ . '/../../Controller/config.php';
 
 // Fonction pour générer un CAPTCHA simple
 function generateCaptcha() {

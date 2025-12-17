@@ -3,7 +3,7 @@ session_start();
 
 // Check if user is logged in - redirect to login if not
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ../general/signin.php');
+    header('Location: ../view/general/signin.php');
     exit;
 }
 
@@ -12,9 +12,9 @@ $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['user_role'] ?? 'Utilisateur';
 
 // Load user data from database
-require_once __DIR__ . '/../../Controller/config.php';
-require_once __DIR__ . '/../../Controller/UserController.php';
-require_once __DIR__ . '/../../Model/User.php';
+require_once __DIR__ . '/../Controller/config.php';
+require_once __DIR__ . '/../Controller/UserController.php';
+require_once __DIR__ . '/../Model/User.php';
 
 $controller = new UserController();
 $user = $controller->showUser($user_id);
@@ -22,12 +22,12 @@ $user = $controller->showUser($user_id);
 // Get user photo URL
 function getPhotoUrl($photo, $prenom, $nom) {
     if ($photo && file_exists(__DIR__ . '/../../uploads/profiles/' . $photo)) {
-        return '../../uploads/profiles/' . $photo;
+        return '../uploads/profiles/' . $photo;
     }
-    return '../general/img/team/team-1.jpg'; // Default photo
+    return '../view/general/img/team/team-1.jpg'; // Default photo
 }
 
-$user_photo = $user ? getPhotoUrl($user->getPhoto(), $user->getPrenom(), $user->getNom()) : '../general/img/team/team-1.jpg';
+$user_photo = $user ? getPhotoUrl($user->getPhoto(), $user->getPrenom(), $user->getNom()) : '../view/general/img/team/team-1.jpg';
 $user_name = $user ? $user->getPrenom() . ' ' . $user->getNom() : 'Utilisateur';
 
 // Map PHP session roles to JavaScript roles
@@ -60,895 +60,10 @@ $role_display_names = [
     'user' => 'Utilisateur',
     'inclusion' => 'Responsable Inclusion'
 ];
+
+// Include the View
+require_once __DIR__ . '/../view/FrontOffice/evaluations-evenements_view.php';
 ?>
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Évaluations & Événements - AbeLink</title>
-    <link href="https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../videograph-master/videograph-master/css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="../../videograph-master/videograph-master/css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="../../videograph-master/videograph-master/css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="../../videograph-master/videograph-master/css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="../../videograph-master/videograph-master/css/magnific-popup.css" type="text/css">
-    <link rel="stylesheet" href="../../videograph-master/videograph-master/css/slicknav.min.css" type="text/css">
-    <link rel="stylesheet" href="../../videograph-master/videograph-master/css/style.css" type="text/css">
-    <link rel="stylesheet" href="css/theme-toggle.css" type="text/css">
-  <style>
-    .header__nav__option { 
-        display: flex; 
-        align-items: center; 
-        justify-content: space-between; 
-    }
-    .header__nav__menu { 
-        flex: 1; 
-        min-width: 0;
-        display: flex;
-        justify-content: flex-end; /* Aligne le menu à droite */
-    }
-    .header__nav__menu ul { 
-        display: flex; 
-        gap: 12px; /* Réduit de 24px à 12px */
-        align-items: center; 
-        margin: 0;
-        padding: 0;
-        justify-content: flex-end; /* Aligne les items du menu à droite */
-    }
-    .header__nav__menu ul li {
-        margin: 0;
-        padding: 0;
-    }
-    .header__nav__menu ul li a {
-        padding: 8px 12px; /* Réduit le padding */
-        font-size: 14px; /* Optionnel: taille de police légèrement réduite */
-        white-space: nowrap;
-    }
-    .header__nav__social { 
-        display: flex; 
-        align-items: center; 
-        gap: 12px; 
-        flex-wrap: nowrap;
-        margin-left: 20px; /* Ajoute un espace entre le menu et les éléments sociaux */
-    }
-    .header__nav__social .input { height: 36px; padding: 6px 10px; }
-    .role-badge { display: inline-flex; align-items: center; height: 36px; }
-    .admin-combined-btn { display: inline-flex; align-items: center; height: 36px; }
-    .content-wrapper { margin-top: 24px; }
-    .page-header { padding: 30px 0; }
-    .page-header h1 { margin: 0 0 8px; color: #fff; }
-    .page-header p { margin: 0; color: #ccc; }
-    
-    /* Role badges */
-    .role-badge {
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 12px;
-        font-weight: bold;
-        margin-left: 10px;
-    }
-
-    .role-badge.user {
-        background: rgba(52, 152, 219, 0.2);
-        color: #3498db;
-    }
-
-    .role-badge.company {
-        background: rgba(46, 204, 113, 0.2);
-        color: #2ecc71;
-    }
-
-    .role-badge.inclusion {
-        background: rgba(155, 89, 182, 0.2);
-        color: #9b59b6;
-    }
-
-    .role-badge.admin {
-        background: rgba(231, 76, 60, 0.2);
-        color: #e74c3c;
-    }
-
-    /* Title Bubble */
-    .title-bubble {
-        display: inline-block;
-        background: linear-gradient(135deg, rgba(58, 76, 237, 0.9), rgba(123, 31, 162, 0.9));
-        padding: 20px 40px;
-        border-radius: 50px;
-        box-shadow: 0 8px 32px rgba(58, 76, 237, 0.4);
-        color: white;
-        font-weight: 700;
-        text-align: center;
-        animation: float 3s ease-in-out infinite;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-    }
-
-    /* Role selector */
-    .role-selector {
-        display: flex;
-        align-items: center;
-        margin-left: 20px;
-    }
-
-    /* Modal styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.5);
-        backdrop-filter: blur(5px);
-    }
-
-    .panel {
-        background: rgba(255,255,255,0.1);
-        margin: 5% auto;
-        padding: 20px;
-        border-radius: 12px;
-        width: 90%;
-        max-width: 600px;
-        position: relative;
-    }
-
-    /* Form styles */
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-    }
-
-    .checkbox-group {
-        display: grid;
-        gap: 10px;
-        margin-top: 8px;
-    }
-
-    .checkbox-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    textarea {
-        width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid rgba(255,255,255,0.2);
-        background: rgba(255,255,255,0.1);
-        color: white;
-        font-family: inherit;
-        resize: vertical;
-        min-height: 100px;
-    }
-
-    textarea:focus {
-        outline: none;
-        border-color: #3498db;
-    }
-
-    .small {
-        font-size: 12px;
-        color: #ccc;
-    }
-
-    /* Event card styles */
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 20px;
-    }
-
-    .event-card {
-        padding: 20px;
-        border-radius: 12px;
-        transition: transform 0.2s ease;
-    }
-
-    .event-card:hover {
-        transform: translateY(-2px);
-    }
-
-    .event-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: white;
-    }
-
-    .company-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 8px;
-    }
-
-    .company-logo {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        background: #3498db;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: 14px;
-    }
-
-    .company-name {
-        color: #ccc;
-        font-size: 14px;
-    }
-
-    .meta {
-        color: #ccc;
-        font-size: 14px;
-        margin-bottom: 10px;
-    }
-
-    .tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 5px;
-        margin: 10px 0;
-    }
-
-    .tag {
-        padding: 4px 8px;
-        background: rgba(255,255,255,0.1);
-        border-radius: 12px;
-        font-size: 12px;
-        color: #ccc;
-    }
-
-    .tag.status {
-        background: rgba(52, 152, 219, 0.2);
-        color: #3498db;
-    }
-
-    .tag.status.publie {
-        background: rgba(46, 204, 113, 0.2);
-        color: #2ecc71;
-    }
-
-    .tag.status.brouillon {
-        background: rgba(241, 196, 15, 0.2);
-        color: #f1c40f;
-    }
-
-    .stars {
-        color: #f1c40f;
-        font-size: 14px;
-    }
-
-    .avg {
-        color: #ccc;
-        font-size: 12px;
-        margin-left: 5px;
-    }
-
-    .card-actions {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-top: 15px;
-    }
-
-    /* Button styles */
-    .cta-button {
-        padding: 10px 16px;
-        border: none;
-        border-radius: 8px;
-        background: rgba(255,255,255,0.1);
-        color: white;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-size: 14px;
-    }
-
-    .cta-button:hover {
-        background: rgba(255,255,255,0.2);
-        transform: translateY(-1px);
-    }
-
-    .cta-button.primary {
-        background: #3498db;
-    }
-
-    .cta-button.primary:hover {
-        background: #2980b9;
-    }
-
-    /* Input styles */
-    .input {
-        width: 100%;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid rgba(255,255,255,0.2);
-        background: rgba(255,255,255,0.1);
-        color: white;
-        font-family: inherit;
-    }
-
-    .input:focus {
-        outline: none;
-        border-color: #3498db;
-    }
-
-    /* Utility classes */
-    .muted {
-        color: #666;
-        font-style: italic;
-    }
-
-    .glass {
-        background: rgba(255,255,255,0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-    
-    /* Loading indicator */
-    .loading {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(255,255,255,.3);
-        border-radius: 50%;
-        border-top-color: #fff;
-        animation: spin 1s ease-in-out infinite;
-        margin-right: 10px;
-    }
-    
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    /* Combined admin button */
-    .admin-combined-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-
-    .admin-combined-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-    }
-
-    /* User profile dropdown */
-    .user-profile-dropdown {
-        position: relative;
-        display: inline-block;
-    }
-
-    .user-profile-button {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 6px 12px;
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 25px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .user-profile-button:hover {
-        background: rgba(255,255,255,0.2);
-        border-color: rgba(255,255,255,0.3);
-    }
-
-    .user-avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        object-fit: cover;
-        border: 2px solid rgba(255,255,255,0.3);
-    }
-
-    .user-info {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .user-name {
-        font-size: 14px;
-        font-weight: 600;
-        color: white;
-        line-height: 1.2;
-    }
-
-    .user-role-text {
-        font-size: 12px;
-        color: rgba(255,255,255,0.7);
-    }
-
-    .user-dropdown-menu {
-        display: none;
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        min-width: 200px;
-        background: rgba(15,23,42,0.95);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 12px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-        z-index: 1000;
-        overflow: hidden;
-    }
-
-    .user-dropdown-menu.show {
-        display: block;
-    }
-
-    .user-dropdown-item {
-        display: block;
-        padding: 12px 16px;
-        color: white;
-        text-decoration: none;
-        transition: background 0.2s ease;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .user-dropdown-item:last-child {
-        border-bottom: none;
-    }
-
-    .user-dropdown-item:hover {
-        background: rgba(255,255,255,0.1);
-    }
-
-    .user-dropdown-item i {
-        margin-right: 10px;
-        width: 20px;
-        text-align: center;
-    }
-
-    /* Pagination styles */
-    .pagination-controls {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        justify-content: center;
-        flex-wrap: wrap;
-    }
-
-    .pagination-btn {
-        padding: 8px 16px;
-        background: rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 6px;
-        color: white;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-size: 14px;
-    }
-
-    .pagination-btn:hover:not(:disabled) {
-        background: rgba(255,255,255,0.2);
-        transform: translateY(-1px);
-    }
-
-    .pagination-btn.active {
-        background: #3498db;
-        border-color: #3498db;
-    }
-
-    .pagination-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .pagination-info {
-        color: #ccc;
-        font-size: 14px;
-        padding: 0 12px;
-    }
-
-    /* Text overflow fixes */
-    .event-card {
-        overflow: hidden;
-        word-wrap: break-word;
-    }
-
-    .event-title,
-    .event-description,
-    .event-detail {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        word-wrap: break-word;
-        word-break: break-word;
-    }
-
-    .event-description {
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    /* Ensure ALL text in cards wraps properly */
-    .event-card,
-    .event-card *,
-    .glass,
-    .glass * {
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        word-break: break-word;
-        hyphens: auto;
-    }
-
-    /* Specific elements that need wrapping */
-    .meta,
-    .company-name,
-    .tag,
-    .small,
-    .event-detail,
-    p,
-    span,
-    div {
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-</style>
-    </head>
-<body>
-    <header class="header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-2">
-                    <div class="header__logo">
-                        <div class="site-title">
-        <a href="../general/index.php">
-            <span class="letter-a">A</span>
-            <span class="letter-b">b</span>
-            <span class="letter-l">l</span>
-            <span class="letter-e">e</span>
-            <span class="letter-link">Link</span>
-        </a>
-    </div>
-    <style> .site-title {
-       margin-top: -0px;
-       margin-left: -15px; /* Move logo more to the left */
-    padding: 0;
-}
-
-.site-title a {
-    font-family: 'Josefin Sans', sans-serif;
-    font-size: 26px; /* Reduced from 32px */
-    font-weight: 700;
-    text-decoration: none;
-    line-height: 1.2;
-    display: inline-flex;
-    gap: 2px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: 0.3s ease;
-}
-
-/* ====== COULEURS MODERNES ====== */
-.letter-a  { color: #ff4f5e; text-shadow: 0 0 8px rgba(255,79,94,0.6); }
-.letter-b  { color: #4c8df5; text-shadow: 0 0 8px rgba(76,141,245,0.6); }
-.letter-l  { color: #b87bff; text-shadow: 0 0 8px rgba(184,123,255,0.6); }
-.letter-e  { color: #ffb247; text-shadow: 0 0 8px rgba(255,178,71,0.6); }
-.letter-link { 
-    color: #ffffff; 
-    margin-left: 4px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.7);
-}
-
-/* ====== HOVER ANIMATION ====== */
-.site-title a:hover {
-    transform: scale(1.05);
-    filter: drop-shadow(0 0 12px rgba(0, 187, 255, 0.6));
-}
-
-.site-title a span:hover {
-    transform: translateY(-2px);
-    display: inline-block;
-    transition: 0.2s ease;
-}</style>
-                    </div>
-                </div>
-                <div class="col-lg-10">
-                    <div class="header__nav__option">
-                        <nav class="header__nav__menu mobile-menu">
-                            <ul>
-                                <li><a href="../general/index.php">Accueil</a></li>
-                                <li class="active"><a href="evaluations-evenements.php">Évaluations & Événements</a></li>
-                                <li><a href="../../Controller/historique.php">Historique</a></li>
-                                <?php if ($user_role === 'Admin'): ?>
-                                <li><a href="../../Controller/admin_dashboard.php">Administration</a></li>
-                                <?php endif; ?>
-                            </ul>
-                        </nav>
-                        <div class="header__nav__social">
-                            <div id="roleBadge" class="role-badge <?php echo $js_role; ?>">
-                                <?php echo $role_display_names[$js_role] ?? 'Utilisateur'; ?>
-                            </div>
-                            <div class="user-profile-dropdown" id="userProfileDropdown">
-                                <button class="user-profile-button" onclick="toggleUserMenu()">
-                                    <img src="<?php echo htmlspecialchars($user_photo); ?>" alt="<?php echo htmlspecialchars($user_name); ?>" class="user-avatar">
-                                    <div class="user-info">
-                                        <span class="user-name"><?php echo htmlspecialchars($user_name); ?></span>
-                                        <span class="user-role-text"><?php echo htmlspecialchars($role_display_names[$js_role] ?? 'Utilisateur'); ?></span>
-                                    </div>
-                                    <i class="fa fa-chevron-down" style="margin-left: 5px; font-size: 12px;"></i>
-                                </button>
-                                <div class="user-dropdown-menu" id="userDropdownMenu">
-                                    <a href="../general/profile.php" class="user-dropdown-item">
-                                        <i class="fa fa-user"></i> Mon Profil
-                                    </a>
-                                    <a href="../general/profile.php" class="user-dropdown-item">
-                                        <i class="fa fa-cog"></i> Paramètres
-                                    </a>
-                                    <?php if ($user_role === 'Admin'): ?>
-                                    <a href="../../Controller/admin_dashboard.php" class="user-dropdown-item">
-                                        <i class="fa fa-dashboard"></i> Administration
-                                    </a>
-                                    <?php endif; ?>
-                                    <a href="../../Controller/historique.php" class="user-dropdown-item">
-                                        <i class="fa fa-history"></i> Historique
-                                    </a>
-                                    <a href="../general/logout.php" class="user-dropdown-item" style="color: #e74c3c;">
-                                        <i class="fa fa-sign-out"></i> Déconnexion
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="mobile-menu-wrap"></div>
-        </div>
-    </header>
-
-    <!-- Theme Toggle Button -->
-    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()" aria-label="Passer en mode clair">
-        <i class="fa fa-sun-o"></i>
-    </button>
-
-    <section class="services spad">
-    <div class="container">
-        <div class="content-wrapper">
-            <section class="page-header">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <h1 class="title-bubble">Évaluations & Événements Inclusifs</h1>
-                            <p>Découvrez, participez et évaluez les événements inclusifs.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="services spad" style="margin-top: 0; padding-top: 40px;">
-                <h2 style="margin: 6px 0 12px; color: white;">Événements disponibles</h2>
-                
-                <div class="filters glass" style="padding: 20px; margin-bottom: 20px;">
-                    <div style="display: grid; gap: 10px;">
-                        <input id="searchInput" class="input" type="search" placeholder="Rechercher par titre, lieu..." aria-label="Rechercher événements"/>
-                        <select id="filterAccess" class="input" aria-label="Filtrer par accessibilité">
-                            <option value="">Tous les types d'accessibilité</option>
-                            <option>Langue des signes</option>
-                            <option>Accès PMR</option>
-                            <option>Sous-titrage</option>
-                            <option>Interprète LSF</option>
-                            <option>Visio (en ligne)</option>
-                        </select>
-                        <select id="filterCompany" class="input" aria-label="Filtrer par entreprise">
-                            <option value="">Toutes les entreprises</option>
-                        </select>
-                    </div>
-                    <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;">
-                        <button class="cta-button" onclick="filterByDate('upcoming')">À venir</button>
-                        <button class="cta-button primary" onclick="openEventModal()" id="createEventBtn" style="margin-left: auto; display: none;">+ Créer un événement</button>
-                    </div>
-                </div>
-                
-                <div id="eventsGrid" class="grid" role="list" aria-live="polite"></div>
-                <div id="eventsPagination" class="pagination-controls" style="display: none; margin-top: 20px; text-align: center;"></div>
-                <div id="noEvents" class="muted" style="display: none; margin-top: 12px; text-align: center;">Aucun événement trouvé.</div>
-            </section>
-
-            <?php if ($user_role !== 'Admin'): ?>
-            <section class="services spad" style="margin-top: 0; padding-top: 40px; display: none;">
-                <h2 style="margin: 6px 0 12px; color: white;">Événements à évaluer</h2>
-                <p class="muted" style="margin-bottom: 15px;">Évaluez les événements passés auxquels vous avez participé.</p>
-                <div id="eventsToEvaluateGrid" class="grid" role="list" aria-live="polite"></div>
-                <div id="eventsToEvaluatePagination" class="pagination-controls" style="display: none; margin-top: 20px; text-align: center;"></div>
-                <div id="noEventsToEvaluate" class="muted" style="display: none; margin-top: 12px; text-align: center;">Aucun événement à évaluer pour le moment.</div>
-            </section>
-            <?php endif; ?>
-
-            <?php if ($user_role !== 'Admin'): ?>
-            <section class="services spad" style="margin-top: 0; padding-top: 40px; display: none;">
-                <h2 style="margin: 6px 0 12px; color: white;">Mes évaluations</h2>
-                <p class="muted" style="margin-bottom: 15px;">Consultez les évaluations que vous avez déjà soumises.</p>
-                <div id="myEvaluationsGrid" class="grid" role="list" aria-live="polite"></div>
-                <div id="myEvaluationsPagination" class="pagination-controls" style="display: none; margin-top: 20px; text-align: center;"></div>
-                <div id="noMyEvaluations" class="muted" style="display: none; margin-top: 12px; text-align: center;">Vous n'avez pas encore évalué d'événements.</div>
-            </section>
-            <?php endif; ?>
-        </div>
-    </div>
-    </section>
-
-    <!-- Rest of your modals remain the same -->
-    <div id="eventModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="eventModalTitle">
-        <div class="panel glass" role="document">
-            <button class="cta-button" aria-label="Fermer" style="float: right; padding: 8px 12px;" onclick="closeEventModal()">✕</button>
-            <h3 id="eventModalTitle">Créer un événement inclusif</h3>
-            <form id="eventForm">
-                <input type="hidden" id="eventId">
-                <div style="display: grid; gap: 15px;">
-                    <div>
-                        <label for="titre" style="color: white;">Titre de l'événement *</label>
-                        <input id="titre" class="input" required placeholder="Ex: Atelier Accessibilité Numérique">
-                    </div>
-                    <div>
-                        <label for="description" style="color: white;">Description détaillée *</label>
-                        <textarea id="description" required placeholder="Décrivez votre événement, son objectif, son public cible..."></textarea>
-                    </div>
-                    <div class="form-row">
-                        <div class="col">
-                            <label for="date_evenement" style="color: white;">Date de l'événement *</label>
-                            <input id="date_evenement" type="datetime-local" class="input" required>
-                        </div>
-                        <div class="col">
-                            <label for="participants_max" style="color: white;">Nombre maximum de participants</label>
-                            <input id="participants_max" type="number" class="input" min="1" value="50">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="lieu" style="color: white;">Lieu ou lien de participation *</label>
-                        <input id="lieu" class="input" required placeholder="Adresse physique ou lien de visioconférence">
-                    </div>
-                    <div>
-                        <label style="color: white;">Mesures d'accessibilité proposées *</label>
-                        <div class="checkbox-group">
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="access_lsf" value="Langue des signes">
-                                <label for="access_lsf" style="color: white;">Langue des signes (LSF)</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="access_pmr" value="Accès PMR">
-                                <label for="access_pmr" style="color: white;">Accès PMR</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="access_sous_titres" value="Sous-titrage">
-                                <label for="access_sous_titres" style="color: white;">Sous-titrage</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="access_visio" value="Visio (en ligne)">
-                                <label for="access_visio" style="color: white;">Participation en ligne</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input type="checkbox" id="access_autre" value="Autre">
-                                <label for="access_autre" style="color: white;">Autre mesure d'accessibilité</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="statut" style="color: white;">Statut de publication</label>
-                        <select id="statut" class="input">
-                            <option value="Brouillon">Brouillon (non visible)</option>
-                            <option value="Publié">Publié (visible par tous)</option>
-                        </select>
-                        <small class="small">Les événements des entreprises doivent être validés par un modérateur avant publication.</small>
-                    </div>
-
-                    <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px;">
-                        <button type="button" class="cta-button" onclick="closeEventModal()">Annuler</button>
-                        <button type="submit" class="cta-button primary" id="submitEventBtn">Enregistrer l'événement</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="evaluationModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="evaluationModalTitle">
-        <div class="panel glass" role="document">
-            <button class="cta-button" aria-label="Fermer" style="float: right; padding: 8px 12px;" onclick="closeEvaluationModal()">✕</button>
-            <h3 id="evaluationModalTitle">Évaluer un événement</h3>
-            <form id="evaluationForm">
-                <input type="hidden" id="evaluationEventId">
-                <div style="display: grid; gap: 15px;">
-                    <div>
-                        <label for="note_accessibilite" style="color: white;">Note d'accessibilité (1-5) *</label>
-                        <select id="note_accessibilite" class="input" required>
-                            <option value="">Sélectionnez une note</option>
-                            <option value="1">1 - Très mauvais</option>
-                            <option value="2">2 - Mauvais</option>
-                            <option value="3">3 - Moyen</option>
-                            <option value="4">4 - Bon</option>
-                            <option value="5">5 - Excellent</option>
-                        </select>
-                        <small class="small">Évaluez les mesures d'accessibilité (LSF, PMR, sous-titrage...)</small>
-                    </div>
-                    <div>
-                        <label for="note_inclusion" style="color: white;">Note d'inclusion (1-5) *</label>
-                        <select id="note_inclusion" class="input" required>
-                            <option value="">Sélectionnez une note</option>
-                            <option value="1">1 - Très mauvais</option>
-                            <option value="2">2 - Mauvais</option>
-                            <option value="3">3 - Moyen</option>
-                            <option value="4">4 - Bon</option>
-                            <option value="5">5 - Excellent</option>
-                        </select>
-                        <small class="small">Évaluez l'ambiance inclusive et l'accueil des diversités</small>
-                    </div>
-                    <div>
-                        <label for="commentaire" style="color: white;">Commentaire détaillé</label>
-                        <textarea id="commentaire" placeholder="Partagez votre expérience, vos suggestions d'amélioration..."></textarea>
-                    </div>
-
-                    <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 6px;">
-                        <button type="button" class="cta-button" onclick="closeEvaluationModal()">Annuler</button>
-                        <button type="submit" class="cta-button primary">Soumettre l'évaluation</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="detailsModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
-        <div class="panel glass" role="document" style="max-width: 900px;">
-            <button class="cta-button" aria-label="Fermer" style="float: right; padding: 8px 12px;" onclick="closeDetailsModal()">✕</button>
-            <h3 id="detailsTitle">Détails de l'événement</h3>
-            <div id="detailsContent"></div>
-        </div>
-    </div>
-
-    <script src="../../videograph-master/videograph-master/js/jquery-3.3.1.min.js"></script>
-    <script src="../../videograph-master/videograph-master/js/bootstrap.min.js"></script>
-    <script src="../../videograph-master/videograph-master/js/jquery.slicknav.js"></script>
-    <script src="../../videograph-master/videograph-master/js/owl.carousel.min.js"></script>
-    <script src="../../videograph-master/videograph-master/js/jquery.magnific-popup.min.js"></script>
-    <script src="../../videograph-master/videograph-master/js/mixitup.min.js"></script>
-    <script src="../../videograph-master/videograph-master/js/masonry.pkgd.min.js"></script>
-    <script src="../../videograph-master/videograph-master/js/main.js"></script>
-    <script>
-        // Session-based user data (from PHP)
-        const SESSION_USER_ID = <?php echo json_encode($user_id); ?>;
-        const SESSION_USER_ROLE = <?php echo json_encode($js_role); ?>;
-        const SESSION_USER_ROLE_NAME = <?php echo json_encode($user_role); ?>;
-    </script>
-    <script>
-        // User roles and permissions
-        const USER_ROLES = {
-            USER: 'user',
-            COMPANY: 'company',
-            INCLUSION: 'inclusion',
-            ADMIN: 'admin'
-        };
-
-        // Store management disabled: always use database
-        function loadStore() { return { events: [], companies: [], users: [], evaluations: [] }; }
-        function saveStore() { /* no-op: use database only */ }
-
-        // User role management - uses session-based role from PHP
-        function loadUserRole() {
-            // Use session role from PHP, fallback to default
-            return typeof SESSION_USER_ROLE !== 'undefined' ? SESSION_USER_ROLE : USER_ROLES.USER;
-        }
-        
-        function updateUIForRole() {
             const role = window.CURRENT_USER_ROLE || USER_ROLES.USER;
             const roleBadge = document.getElementById('roleBadge');
             const createEventBtn = document.getElementById('createEventBtn');
@@ -1104,8 +219,8 @@ $role_display_names = [
             });
         }
 
-        function filterByDate() {
-            window.CURRENT_FILTER.date = 'upcoming';
+        function filterByDate(dateType) {
+            window.CURRENT_FILTER.date = dateType;
             if (typeof renderEvents === 'function') renderEvents();
         }
 
@@ -1191,7 +306,7 @@ $role_display_names = [
     const content = document.getElementById('detailsContent');
     const title = document.getElementById('detailsTitle');
     
-    const event = window.EVENTS.find(e => e.id == eventId);
+    const event = window.EVENTS.find(e => e.id === eventId);
     if (event) {
         title.textContent = event.titre;
         
@@ -1280,12 +395,8 @@ $role_display_names = [
     }
 }
 
-function closeDetailsModal() {
-    document.getElementById('detailsModal').style.display = 'none';
-}
-
 function loadEventEvaluations(eventId, showReportButtons = false, showModerationButtons = false) {
-    fetch(`../../Controller/admin_moderation.php?action=get_event_evaluations&eventId=${eventId}`)
+    fetch(`../../Control/admin_moderation.php?action=get_event_evaluations&eventId=${eventId}`)
         .then(response => response.json())
         .then(data => {
             const container = document.getElementById('evaluationsContainer');
@@ -1341,7 +452,7 @@ function loadEventEvaluations(eventId, showReportButtons = false, showModeration
 // New functions for evaluation reporting and moderation
 function reportEvaluation(evaluationId) {
     if (confirm('Signaler cette évaluation pour modération ?')) {
-        fetch('../Controller/manage_evaluation.php', {
+        fetch('manage_evaluation.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1373,7 +484,7 @@ function reportEvaluation(evaluationId) {
 
 function approveEvaluationFromDetails(evaluationId, eventId) {
     if (confirm('Approuver cette évaluation ?')) {
-        fetch('../Controller/admin_moderation.php', {
+        fetch('admin_moderation.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1401,7 +512,7 @@ function approveEvaluationFromDetails(evaluationId, eventId) {
 
 function rejectEvaluationFromDetails(evaluationId, eventId) {
     if (confirm('Supprimer cette évaluation ?')) {
-        fetch('../Controller/admin_moderation.php', {
+        fetch('admin_moderation.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1429,7 +540,7 @@ function rejectEvaluationFromDetails(evaluationId, eventId) {
 
 function deleteEventFromDetails(eventId) {
     if (confirm('Supprimer définitivement cet événement ? Toutes les évaluations et participations associées seront également supprimées.')) {
-        fetch('../Controller/admin_moderation.php', {
+        fetch('admin_moderation.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1468,21 +579,8 @@ function isFull(event) {
 
         // Event participation
         function registerForEvent(eventId) {
-            console.log('registerForEvent called with eventId:', eventId, 'type:', typeof eventId);
-            console.log('Current user ID:', window.CURRENT_USER_ID);
-            console.log('Current user role:', window.CURRENT_USER_ROLE);
-            console.log('Available events:', window.EVENTS);
-            console.log('Event IDs in EVENTS:', window.EVENTS ? window.EVENTS.map(e => ({id: e.id, type: typeof e.id})) : 'No events');
-            
-            // Use loose equality (==) to handle type mismatch between string and number
-            const event = window.EVENTS.find(e => e.id == eventId);
-            if (!event) {
-                console.error('Event not found:', eventId);
-                alert('Événement introuvable. Veuillez rafraîchir la page.');
-                return;
-            }
-            
-            console.log('Found event:', event);
+            const event = window.EVENTS.find(e => e.id === eventId);
+            if (!event) return;
             
             // Prevent companies and admins from registering for any events
             if (window.CURRENT_USER_ROLE === 'company') {
@@ -1501,10 +599,8 @@ function isFull(event) {
                 return;
             }
             
-            console.log('Sending registration request...');
-            
             // Register user via backend
-            fetch('../../Controller/manage_participation.php', {
+            fetch('manage_participation.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1516,100 +612,63 @@ function isFull(event) {
                 })
             })
             .then(response => {
-                console.log('Response received:', response);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Registration response data:', data);
-                
-                if (data.success) {
-                    alert('Inscription confirmée ! Nous avons hâte de vous voir.');
-                    // Reload canonical data from DB and refresh lists
-                    loadEventsFromDatabase().then(() => {
-                        renderEvents();
-                        renderEventsToEvaluate();
-                        renderMyEvaluations();
-                    });
-                } else {
-                    alert('Erreur lors de l\'inscription: ' + (data.message || 'Erreur inconnue'));
-                }
-            })
-            .catch(error => {
-                console.error('Error during registration:', error);
-                alert('Erreur lors de l\'enregistrement: ' + error.message);
-            });
-        }
-
-
-        function editEvent(eventId) {
-            openEventModal(eventId);
-        }
-
-        // Database export functions
-        function exportEvents(format) {
-            const btn = document.querySelector(`.export-btn[onclick*="${format}"]`);
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Export...';
-            
-            // Get current filters
-            const params = new URLSearchParams();
-            params.append('format', format);
-            
-            if (window.CURRENT_FILTER.search) params.append('search', window.CURRENT_FILTER.search);
-            if (window.CURRENT_FILTER.access) params.append('access', window.CURRENT_FILTER.access);
-            if (window.CURRENT_FILTER.company) params.append('company', window.CURRENT_FILTER.company);
-            
-            // Prepare the data
-            const exportData = {
-                action: 'export_events',
-                events: window.EVENTS || []
-            };
-            
-            console.log('Exporting events:', window.EVENTS);
-            
-            // Send the data to the server via AJAX
-            fetch(`../../Controller/export_events.php?${params.toString()}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(exportData)
-            })
-            .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
             })
             .then(data => {
-                console.log('Export response:', data);
                 if (data.success) {
-                    resultDiv.innerHTML = `<p style="color: #2ecc71;">${data.message}</p>`;
-                    // Show statistics
-                    if (data.stats) {
-                        document.getElementById('exportStats').style.display = 'block';
-                        document.getElementById('eventsCount').textContent = data.stats.events;
-                        document.getElementById('evaluationsCount').textContent = data.stats.evaluations;
-                        document.getElementById('participationsCount').textContent = data.stats.participations;
-                    }
+                    // Update local state only after backend confirms
+                    if (!event.participations) event.participations = [];
+                    
+                    event.participations.push({
+                        id: data.participationId || makeId(),
+                        idEvenement: eventId,
+                        idUtilisateur: window.CURRENT_USER_ID,
+                        statut: 'Confirmée',
+                        dateInscription: new Date().toISOString()
+                    });
+                    
+                    event.inscrits = (event.inscrits || 0) + 1;
+                    
+                    saveStore();
+                    renderEvents();
+                    
+                    alert('Inscription confirmée ! Nous avons hâte de vous voir.');
+                    window.location.reload(); // Reload to fetch fresh data
                 } else {
-                    resultDiv.innerHTML = `<p style="color: #e74c3c;">Erreur: ${data.message}</p>`;
+                    alert('Erreur lors de l\'inscription: ' + (data.message || 'Erreur inconnue'));
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                resultDiv.innerHTML = `<p style="color: #e74c3c;">Erreur lors de l'export: ${error.message}</p>`;
+                alert('Erreur lors de l\'enregistrement: ' + error.message);
             });
+        }
+
+        function editEvent(eventId) {
+            openEventModal(eventId);
+        }
+
+        // Database export functions - FIXED VERSION
+        function exportEventsToDB() {
+            console.log('Export to DB function called');
+            alert('Export functionality is not currently implemented in this demo.');
+            
+            const resultDiv = document.getElementById('exportResult');
+            if (resultDiv) {
+                resultDiv.innerHTML = '<p style="color: #f39c12;">Export functionality is under development.</p>';
+            }
         }
 
         function checkDBConnection() {
             const resultDiv = document.getElementById('exportResult');
-            resultDiv.innerHTML = '<p style="color: #3498db;">Test de connexion en cours...</p>';
+            if (resultDiv) {
+                resultDiv.innerHTML = '<p style="color: #3498db;">Testing database connection...</p>';
+            }
             
-            fetch('../Controller/export_events.php?action=test_connection')
+            fetch('export_events.php?action=test_connection')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -1618,21 +677,20 @@ function isFull(event) {
             })
             .then(data => {
                 console.log('Connection test response:', data);
-                if (data.success) {
-                    resultDiv.innerHTML = `<p style="color: #2ecc71;">${data.message}</p>`;
-                } else {
-                    resultDiv.innerHTML = `<p style="color: #e74c3c;">Erreur: ${data.message}</p>`;
+                if (resultDiv) {
+                    if (data.success) {
+                        resultDiv.innerHTML = `<p style="color: #2ecc71;">✅ ${data.message}</p>`;
+                    } else {
+                        resultDiv.innerHTML = `<p style="color: #e74c3c;">❌ Error: ${data.message}</p>`;
+                    }
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                resultDiv.innerHTML = `<p style="color: #e74c3c;">Erreur lors du test: ${error.message}</p>`;
+                if (resultDiv) {
+                    resultDiv.innerHTML = `<p style="color: #e74c3c;">❌ Error during test: ${error.message}</p>`;
+                }
             });
-        }
-
-        function viewExportedEvents() {
-            // This would typically redirect to a page showing events from the database
-            alert('Cette fonctionnalité afficherait les événements exportés depuis la base de données.');
         }
 
         function updateDBConfig() {
@@ -1643,7 +701,14 @@ function isFull(event) {
             
             // In a real application, you'd send this to a configuration file
             // For this demo, we'll just show a confirmation
-            alert(`Configuration mise à jour:\nHôte: ${host}\nBase: ${dbName}\nUtilisateur: ${user}`);
+            alert(`Configuration updated:\nHost: ${host}\nDatabase: ${dbName}\nUser: ${user}`);
+            
+            // Store in localStorage for demo purposes
+            localStorage.setItem('db_config', JSON.stringify({ host, dbName, user }));
+        }
+
+        function viewExportedEvents() {
+            alert('This feature would show events exported from the database.');
         }
 
         // Event form handling
@@ -1715,8 +780,9 @@ function isFull(event) {
             }
             const eventDate = new Date(date_evenement);
             const now = new Date();
-            if (eventDate < now) {
-                alert('❌ La date de l\'événement doit être dans le futur.');
+            // Allow admins to create past events
+            if (eventDate < now && window.CURRENT_USER_ROLE !== 'admin') {
+                alert('❌ La date de l\'événement doit être dans le futur. (Role: ' + window.CURRENT_USER_ROLE + ')');
                 document.getElementById('date_evenement').focus();
                 return;
             }
@@ -1776,7 +842,7 @@ function isFull(event) {
             }
             
             // Send to server
-            fetch('../../Controller/save_event.php', {
+            fetch('save_event.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1801,13 +867,34 @@ function isFull(event) {
                 console.log('Save event response:', data);
                 
                 if (data.success) {
-                    // Reload from database to reflect canonical state
+                    // Update local storage with the new/updated event
+                    if (eventId) {
+                        // Edit existing event
+                        const index = window.EVENTS.findIndex(e => e.id === eventId);
+                        if (index !== -1) {
+                            window.EVENTS[index] = {
+                                ...window.EVENTS[index],
+                                ...eventData,
+                                id: eventId
+                            };
+                            console.log('Event updated:', window.EVENTS[index]);
+                        }
+                    } else {
+                        // Create new event
+                        const newEvent = {
+                            ...eventData,
+                            id: data.eventId || makeId(),
+                            inscrits: 0,
+                            participations: [],
+                            evaluations: []
+                        };
+                        window.EVENTS.unshift(newEvent);
+                        console.log('New event created:', newEvent);
+                    }
+                    
+                    saveStore();
+                    renderEvents();
                     closeEventModal();
-                    loadEventsFromDatabase().then(() => {
-                        renderEvents();
-                        renderEventsToEvaluate();
-                        renderMyEvaluations();
-                    });
                     
                     alert('Événement enregistré avec succès !');
                 } else {
@@ -1911,7 +998,7 @@ function isFull(event) {
             console.log('Submitting evaluation:', evaluationData);
             
             // Send to server
-            fetch('../Controller/manage_evaluation.php', {
+            fetch('manage_evaluation.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1928,14 +1015,31 @@ function isFull(event) {
                 console.log('Evaluation response:', data);
                 
                 if (data.success) {
-                    // Reload canonical data from DB
-                    closeEvaluationModal();
-                    loadEventsFromDatabase().then(() => {
+                    // Update local storage with the new evaluation
+                    const event = window.EVENTS.find(e => e.id === eventId);
+                    if (event) {
+                        if (!event.evaluations) event.evaluations = [];
+                        
+                        const newEvaluation = {
+                            id: data.evaluationId || makeId(),
+                            idEvenement: eventId,
+                            idUtilisateur: window.CURRENT_USER_ID,
+                            note_accessibilite: note_accessibilite,
+                            note_inclusion: note_inclusion,
+                            commentaire: commentaire,
+                            dateEvaluation: new Date().toISOString()
+                        };
+                        
+                        event.evaluations.push(newEvaluation);
+                        saveStore();
+                        
+                        closeEvaluationModal();
                         renderEventsToEvaluate();
                         renderMyEvaluations();
-                        renderEvents();
+                        renderEvents(); // Refresh events to show updated ratings
+                        
                         alert('Merci pour votre évaluation ! Votre retour aide à améliorer l\'inclusion.');
-                    });
+                    }
                 } else {
                     alert('Erreur lors de l\'envoi de l\'évaluation: ' + data.message);
                 }
@@ -2116,77 +1220,268 @@ function isFull(event) {
             }
         }
 
-        function renderMyEvaluations() {
-            const myEvaluationsGrid = document.getElementById('myEvaluationsGrid');
-            const noMyEvaluations = document.getElementById('noMyEvaluations');
+       function renderMyEvaluations() {
+    const myEvaluationsGrid = document.getElementById('myEvaluationsGrid');
+    const noMyEvaluations = document.getElementById('noMyEvaluations');
+    
+    console.log('DEBUG: Rendering my evaluations...');
+    console.log('DEBUG: User ID:', window.CURRENT_USER_ID);
+    
+    // Show loading state
+    myEvaluationsGrid.innerHTML = `
+        <div class="glass" style="padding: 20px; text-align: center; grid-column: 1 / -1;">
+            <div class="loading"></div>
+            <p>Chargement de vos évaluations...</p>
+        </div>
+    `;
+    
+    // First, let's test the endpoint directly
+    console.log('DEBUG: Testing endpoint: manage_evaluation.php?action=get_user_evaluations&userId=' + window.CURRENT_USER_ID);
+    
+    // Try a simpler approach first - check if endpoint exists
+    fetch('manage_evaluation.php?action=test')
+        .then(response => response.text())
+        .then(text => {
+            console.log('DEBUG: Test endpoint response:', text.substring(0, 200));
             
-            const myEvaluations = [];
-            window.EVENTS.forEach(event => {
-                if (event.evaluations) {
-                    event.evaluations.filter(e => e.idUtilisateur === window.CURRENT_USER_ID)
-                        .forEach(evaluationObj => {
-                            myEvaluations.push({
-                                ...evaluationObj,
-                                eventTitre: event.titre,
-                                eventDate: event.date,
-                                companyName: getCompanyName(event.idUtilisateur)
-                            });
-                        });
-                }
-            });
+            // Now try to get user evaluations
+            return fetch(`manage_evaluation.php?action=get_user_evaluations&userId=${window.CURRENT_USER_ID}`);
+        })
+        .catch(() => {
+            // If test fails, try the main endpoint directly
+            return fetch(`manage_evaluation.php?action=get_user_evaluations&userId=${window.CURRENT_USER_ID}`);
+        })
+        .then(response => {
+            console.log('DEBUG: Response status:', response.status, response.statusText);
+            console.log('DEBUG: Response headers:', response.headers.get('content-type'));
+            
+            // First check if it's JSON
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                return response.text().then(text => {
+                    console.error('DEBUG: Non-JSON response received (first 500 chars):', text.substring(0, 500));
+                    throw new Error(`Server returned HTML instead of JSON. This usually means a PHP error. Check server logs.`);
+                });
+            }
+            
+            return response.json();
+        })
+        .then(data => {
+            console.log('DEBUG: User evaluations response:', data);
             
             myEvaluationsGrid.innerHTML = '';
             
-            if (myEvaluations.length === 0) {
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to load evaluations');
+            }
+            
+            if (!data.evaluations || data.evaluations.length === 0) {
                 noMyEvaluations.style.display = 'block';
-            } else {
-                noMyEvaluations.style.display = 'none';
+                noMyEvaluations.textContent = 'Vous n\'avez pas encore évalué d\'événements.';
+                return;
+            }
+            
+            noMyEvaluations.style.display = 'none';
+            
+            // Display each evaluation
+            data.evaluations.forEach(evaluation => {
+                const div = document.createElement('div');
+                div.className = 'event-card glass';
+                div.setAttribute('role', 'listitem');
                 
-                myEvaluations.forEach(evaluationObj => {
-                    const div = document.createElement('div');
-                    div.className = 'event-card glass';
+                // Format the date
+                const evalDate = evaluation.dateEvaluation ? new Date(evaluation.dateEvaluation) : new Date();
+                const formattedDate = evalDate.toLocaleDateString('fr-FR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                div.innerHTML = `
+                    <div class="event-title">${escapeHtml(evaluation.event_titre || 'Événement sans titre')}</div>
                     
-                    const evalDate = evaluationObj.dateEvaluation ? new Date(evaluationObj.dateEvaluation) : new Date();
-                    const formattedEvalDate = evalDate.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    <div class="company-info">
+                        <div class="company-logo">${evaluation.organizer_prenom ? evaluation.organizer_prenom.charAt(0) : 'O'}</div>
+                        <div class="company-name">${escapeHtml(evaluation.organizer_prenom || '')} ${escapeHtml(evaluation.organizer_nom || 'Organisateur')}</div>
+                    </div>
                     
-                    const accessNote = evaluationObj.note_accessibilite || 0;
-                    const inclusionNote = evaluationObj.note_inclusion || 0;
+                    <div class="meta">
+                        ${formatDate(evaluation.event_date)} • ${escapeHtml(evaluation.event_lieu || '')}
+                    </div>
                     
-                    div.innerHTML = `
-                        <div class="event-title">${escapeHtml(evaluationObj.eventTitre)}</div>
-                        <div class="company-info">
-                            <div class="company-logo">${evaluationObj.companyName ? evaluationObj.companyName.charAt(0) : 'E'}</div>
-                            <div class="company-name">${escapeHtml(evaluationObj.companyName || 'AbeLink')}</div>
+                    <div style="margin: 15px 0; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <div>
+                                <div class="small" style="color: #aaa;">Évalué le:</div>
+                                <div style="color: white; font-size: 14px;">${formattedDate}</div>
+                            </div>
+                            ${evaluation.signalee ? 
+                                '<span style="color: #e74c3c; font-size: 12px; background: rgba(231, 76, 60, 0.2); padding: 4px 8px; border-radius: 12px;">🚩 Signalée</span>' : ''}
                         </div>
-                        <div class="meta">${formatDate(evaluationObj.eventDate)} • Évalué le ${formattedEvalDate}</div>
                         
-                        <div class="glass" style="margin: 15px 0; padding: 15px; border-radius: 8px;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px;">
-                                <div>
-                                    <div class="small" style="color: #aaa;">Accessibilité</div>
-                                    <div class="stars">${renderStars(accessNote)} <span class="avg" style="color: white;">${accessNote}/5</span></div>
-                                </div>
-                                <div>
-                                    <div class="small" style="color: #aaa;">Inclusion</div>
-                                    <div class="stars">${renderStars(inclusionNote)} <span class="avg" style="color: white;">${inclusionNote}/5</span></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 10px;">
+                            <div>
+                                <div class="small" style="color: #aaa;">Note d'accessibilité</div>
+                                <div class="stars">${renderStars(evaluation.note_accessibilite || 0)} 
+                                    <span class="avg" style="color: white;">${evaluation.note_accessibilite || 0}/5</span>
                                 </div>
                             </div>
                             <div>
-                                <div class="small" style="color: #aaa; margin-bottom: 5px;">Votre commentaire</div>
-                                <div style="color: #ccc; font-style: italic; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px;">"${escapeHtml(evaluationObj.commentaire || 'Pas de commentaire')}"</div>
+                                <div class="small" style="color: #aaa;">Note d'inclusion</div>
+                                <div class="stars">${renderStars(evaluation.note_inclusion || 0)} 
+                                    <span class="avg" style="color: white;">${evaluation.note_inclusion || 0}/5</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="card-actions">
-                            <button class="cta-button" onclick="openEventDetails('${evaluationObj.idEvenement}')">Détails</button>
+                        
+                        <div>
+                            <div class="small" style="color: #aaa; margin-bottom: 5px;">Votre commentaire:</div>
+                            <div style="color: #ccc; font-style: italic; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 6px;">
+                                "${escapeHtml(evaluation.commentaire || 'Pas de commentaire')}"
+                            </div>
                         </div>
-                    `;
+                    </div>
                     
-                    myEvaluationsGrid.appendChild(div);
-                });
-            }
-        }
+                    <div class="card-actions">
+                        <button class="cta-button" onclick="openEventDetails(${evaluation.idEvenement})">Voir l'événement</button>
+                        <button class="cta-button primary" onclick="editEvaluation(${evaluation.id})">Modifier</button>
+                        <button class="cta-button danger" onclick="deleteEvaluation(${evaluation.id})" 
+                            style="background: rgba(255, 107, 107, 0.1); color: #ff6b6b; border-color: rgba(255,107,107,0.3);">
+                            Supprimer
+                        </button>
+                    </div>
+                `;
+                
+                myEvaluationsGrid.appendChild(div);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading user evaluations:', error);
+            myEvaluationsGrid.innerHTML = `
+                <div class="glass" style="padding: 20px; text-align: center; grid-column: 1 / -1;">
+                    <h3 style="color: #e74c3c; margin-bottom: 10px;">Erreur de chargement</h3>
+                    <p style="color: #ccc; margin-bottom: 15px;">${error.message}</p>
+                    <p style="color: #999; font-size: 12px;">User ID: ${window.CURRENT_USER_ID}</p>
+                    <div style="margin-top: 15px;">
+                        <button class="cta-button primary" onclick="renderMyEvaluations()" style="margin-right: 10px;">Réessayer</button>
+                        <button class="cta-button" onclick="testEvaluationEndpoint()">Tester le point d'accès</button>
+                    </div>
+                </div>
+            `;
+        });
+}
 
-        // Always use database; no sample data
+// Add test function
+function testEvaluationEndpoint() {
+    console.log('Testing evaluation endpoint...');
+    
+    // Test different endpoints
+    const endpoints = [
+        'manage_evaluation.php',
+        '../Control/manage_evaluation.php',
+        'manage_evaluation.php?action=test'
+    ];
+    
+    endpoints.forEach(endpoint => {
+        fetch(endpoint)
+            .then(response => response.text())
+            .then(text => {
+                console.log(`Endpoint ${endpoint}:`, text.substring(0, 200));
+            })
+            .catch(error => {
+                console.error(`Endpoint ${endpoint} failed:`, error);
+            });
+    });
+    
+    alert('Vérifiez la console du navigateur (F12) pour voir les résultats des tests.');
+}
+
+// Add function to delete evaluation
+// Update the deleteEvaluation function
+function deleteEvaluation(evaluationId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette évaluation ? Cette action est irréversible.')) {
+        return;
+    }
+    
+    // Try local endpoint first, then fallback
+    fetch('manage_evaluation.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            action: 'delete',
+            evaluationId: evaluationId
+        })
+    })
+    .then(response => {
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            return response.text().then(text => {
+                console.error('Non-JSON response:', text.substring(0, 200));
+                throw new Error('Server error - check PHP configuration');
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            alert('Évaluation supprimée avec succès.');
+            renderMyEvaluations(); // Refresh the list
+        } else {
+            alert('Erreur: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Erreur lors de la suppression: ' + error.message);
+    });
+}
+
+        // Initialize sample data if empty
+        function initializeSampleData() {
+            const data = loadStore();
+            
+            if (data.events.length === 0) {
+                data.events = [
+                    {
+                        id: 'event_1',
+                        titre: 'Atelier Accessibilité Numérique',
+                        description: 'Un atelier pratique pour découvrir les bonnes pratiques en matière d\'accessibilité numérique.',
+                        date: '2025-12-15 14:00:00',
+                        lieu: 'Paris, France',
+                        idUtilisateur: 'admin_1',
+                        accessibilite: ['Langue des signes', 'Accès PMR', 'Sous-titrage'],
+                        statut: 'Publié',
+                        participants_max: 30,
+                        inscrits: 15,
+                        participations: [],
+                        evaluations: []
+                    }
+                ];
+            }
+            
+            if (data.companies.length === 0) {
+                data.companies = [
+                    {
+                        id: 'comp_1',
+                        nom: 'Tech Inclusive',
+                        verifiee: true
+                    },
+                    {
+                        id: 'comp_2', 
+                        nom: 'Accessibilité Pro',
+                        verifiee: true
+                    }
+                ];
+            }
+            
+            saveStore();
+            return data;
+        }
 
         // Close modals when clicking outside
         document.addEventListener('click', function(event) {
@@ -2206,17 +1501,18 @@ function isFull(event) {
             // Use session-based role and user ID from PHP
             window.CURRENT_USER_ROLE = typeof SESSION_USER_ROLE !== 'undefined' ? SESSION_USER_ROLE : USER_ROLES.USER;
             window.CURRENT_USER_ID = typeof SESSION_USER_ID !== 'undefined' ? SESSION_USER_ID : null;
-            window.CURRENT_FILTER = { search: '', access: '', date: 'upcoming', company: '' };
+           window.CURRENT_FILTER = { search: '', access: '', date: 'upcoming', company: '' };
+            
+            console.log('User info:', {
+                role: window.CURRENT_USER_ROLE,
+                userId: window.CURRENT_USER_ID
+            });
             
             updateUIForRole();
             setupFilters();
             
-            // Load events from database, then render
-            loadEventsFromDatabase().then(() => {
-                renderEvents();
-                renderEventsToEvaluate();
-                renderMyEvaluations();
-            });
+            // Load events from database
+            loadEventsFromDatabase();
             
             // Connect event listeners
             const eventForm = document.getElementById('eventForm');
@@ -2225,17 +1521,27 @@ function isFull(event) {
             if (eventForm) {
                 eventForm.removeEventListener('submit', handleEventFormSubmit);
                 eventForm.addEventListener('submit', handleEventFormSubmit);
+                console.log('Event form listener attached');
+            } else {
+                console.error('Event form not found!');
             }
+            
             if (evaluationForm) {
                 evaluationForm.removeEventListener('submit', handleEvaluationFormSubmit);
                 evaluationForm.addEventListener('submit', handleEvaluationFormSubmit);
+                console.log('Evaluation form listener attached');
+            } else {
+                console.error('Evaluation form not found!');
             }
+            
+            console.log('AbeLink initialized with role:', window.CURRENT_USER_ROLE);
         });
 
         // Load events from database
         function loadEventsFromDatabase() {
             console.log('Loading events from database...');
-            return fetch('../../Controller/get_events_for_evaluation.php')
+            
+            fetch('get_events_for_evaluation.php')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -2243,11 +1549,15 @@ function isFull(event) {
                     return response.json();
                 })
                 .then(data => {
+                    console.log('Database response:', data);
+                    
                     if (data.success) {
                         window.EVENTS = data.events || [];
-                        // Extract companies from events
+                        window.COMPANIES = []; // Companies will be extracted from events
+                        
+                        // Extract unique companies from events
                         const companiesMap = new Map();
-                        (window.EVENTS || []).forEach(event => {
+                        data.events.forEach(event => {
                             if (event.idUtilisateur && !companiesMap.has(event.idUtilisateur)) {
                                 companiesMap.set(event.idUtilisateur, {
                                     id: event.idUtilisateur,
@@ -2258,14 +1568,25 @@ function isFull(event) {
                             }
                         });
                         window.COMPANIES = Array.from(companiesMap.values());
+                        
+                        console.log('Loaded from database:', {
+                            events: window.EVENTS.length,
+                            companies: window.COMPANIES.length,
+                            sampleEvent: window.EVENTS[0]
+                        });
+                        
+                        // Render all sections
+                        renderEvents();
+                        renderEventsToEvaluate();
+                        renderMyEvaluations();
                     } else {
-                        throw new Error(data.message || 'Failed to load events');
+                        console.error('Failed to load events:', data.message);
+                        alert('Erreur lors du chargement des événements: ' + data.message);
                     }
                 })
                 .catch(error => {
                     console.error('Error loading events:', error);
-                    window.EVENTS = [];
-                    window.COMPANIES = [];
+                    alert('Erreur lors du chargement des événements. Veuillez réessayer.');
                 });
         }
 
@@ -2280,6 +1601,8 @@ function isFull(event) {
         window.filterByDate = filterByDate;
         window.exportEventsToDB = exportEventsToDB;
         window.checkDBConnection = checkDBConnection;
+        window.viewExportedEvents = viewExportedEvents;
+        window.updateDBConfig = updateDBConfig;
         
         // User profile dropdown toggle
         function toggleUserMenu() {
@@ -2300,12 +1623,5 @@ function isFull(event) {
         
         window.toggleUserMenu = toggleUserMenu;
     </script>
-    
-    <!-- Theme Toggle Script -->
-    <script src="js/theme-toggle.js"></script>
-    
-    <!-- Pagination Script -->
-    <script src="js/pagination.js"></script>
-    <script src="js/pagination-helper.js"></script>
 </body>
 </html>

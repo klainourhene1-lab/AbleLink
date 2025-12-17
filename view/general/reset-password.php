@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../Control/UserController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
 
 $errors = [];
 $success = false;

@@ -14,8 +14,8 @@ if ($_SESSION['user_role'] !== 'Entreprise') {
 }
 
 // Load user info
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/UserController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
 require_once __DIR__ . '/../../Model/User.php';
 $controller = new UserController();
 $user = $controller->showUser($_SESSION['user_id']);

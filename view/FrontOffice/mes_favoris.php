@@ -1,8 +1,8 @@
 <?php
 session_start();
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/UserController.php';
-require_once __DIR__ . '/../../Control/FavorisController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
+require_once __DIR__ . '/../../Controller/FavorisController.php';
 
 $userId = $_SESSION['user_id'] ?? null;
 if (!$userId) {
@@ -221,7 +221,7 @@ $total = count($allFavorites);
                                 <li><a href="liste_offres.php">Offres d'Emploi</a></li>
                                 <li class="active"><a href="mes_favoris.php">Mes Favoris</a></li>
                                 <?php if ($user_role === 'Admin'): ?>
-                                    <li><a href="../../Control/admin_dashboard.php">Administration</a></li>
+                                    <li><a href="../../Controller/admin_dashboard.php">Administration</a></li>
                                 <?php endif; ?>
                             </ul>
                         </nav>
@@ -363,7 +363,7 @@ $total = count($allFavorites);
         function removeFavorite(id_offre) {
             if(!confirm('Retirer cette offre de vos favoris ?')) return;
 
-            fetch('../../Control/job_handler.php', {
+            fetch('../../Controller/job_handler.php', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ action: 'toggle_favorite', offre_id: id_offre })

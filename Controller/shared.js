@@ -381,7 +381,7 @@ function registerForEvent(eventId) {
     }
     
     // Make network call to backend
-    fetch('../../Control/manage_participation.php', {
+    fetch('../../Controller/manage_participation.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

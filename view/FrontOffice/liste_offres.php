@@ -2,9 +2,9 @@
 session_start();
 
 // Load necessary files
-require_once __DIR__ . '/../../Control/config.php';
-require_once __DIR__ . '/../../Control/UserController.php';
-require_once __DIR__ . '/../../Control/OffreController.php';
+require_once __DIR__ . '/../../Controller/config.php';
+require_once __DIR__ . '/../../Controller/UserController.php';
+require_once __DIR__ . '/../../Controller/OffreController.php';
 require_once __DIR__ . '/../../Model/User.php';
 
 // Initialize Controllers
@@ -238,7 +238,7 @@ $cat = $_GET['cat'] ?? '';
                                 <?php if ($user_id): ?>
                                     <li><a href="mes_favoris.php">Mes Favoris</a></li>
                                     <?php if ($user_role === 'Admin'): ?>
-                                        <li><a href="../../Control/admin_dashboard.php">Administration</a></li>
+                                        <li><a href="../../Controller/admin_dashboard.php">Administration</a></li>
                                     <?php endif; ?>
                                 <?php endif; ?>
                             </ul>
@@ -406,7 +406,7 @@ $cat = $_GET['cat'] ?? '';
             // Check current backend status via icon class is simplified, better to trust API response
             // We just call toggle endpoint
             
-            fetch('../../Control/job_handler.php', {
+            fetch('../../Controller/job_handler.php', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ action: 'toggle_favorite', offre_id: id_offre })
@@ -438,7 +438,7 @@ $cat = $_GET['cat'] ?? '';
             const favButtons = document.querySelectorAll('[id^="fav-btn-"]');
             favButtons.forEach(btn => {
                 const id_offre = btn.id.split('-')[2];
-                fetch(`../../Control/job_handler.php?action=check_favorite&offre_id=${id_offre}`)
+                fetch(`../../Controller/job_handler.php?action=check_favorite&offre_id=${id_offre}`)
                 .then(r => r.json())
                 .then(data => {
                     if (data.isFavorite) {

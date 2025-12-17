@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once __DIR__ . '/../../Control/CandidatureController.php';
+require_once __DIR__ . '/../../Controller/CandidatureController.php';
 $candCtrl = new CandidatureController();
 $myApps = $candCtrl->getMyApplications();
 ?>

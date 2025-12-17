@@ -7,7 +7,7 @@ $client_secret = "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";
 $redirect_uri = "http://localhost/yerabby/view/general/google.php";
 // --------------------------------
 
-require_once __DIR__ . "/../../Control/UserController.php";
+require_once __DIR__ . "/../../Controller/UserController.php";
 require_once __DIR__ . "/../../Model/User.php";
 
 $controller = new UserController();

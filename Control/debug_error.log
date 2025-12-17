@@ -1,4 +1,0 @@
-2025-11-26 21:47:54 Error: Invalid JSON data: Syntax error
-Trace: #0 C:\xampp\htdocs\project\Control\EventController.php(263): EventController->handleRequest()
-#1 C:\xampp\htdocs\project\test_debug_event.php(29): require_once('C:\\xampp\\htdocs...')
-#2 {main}
