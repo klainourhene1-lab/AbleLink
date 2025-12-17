@@ -245,10 +245,11 @@ Si vous souhaitez rejoindre notre équipe et contribuer à ce projet académique
 
 | Contributeur | Rôle | GitHub |
 |--------------|------|--------|
-| [Votre Nom] | 🎯 Développement Principal | [@yourname](https://github.com/yourname) |
-| [Nom Membre 1] | 🔧 Backend & Base de Données | [@member1](https://github.com/member1) |
-| [Nom Membre 2] | 🎨 Frontend & Interface Utilisateur | [@member2](https://github.com/member2) |
-| [Nom Membre 3] | 🧪 Tests & Documentation | [@member3](https://github.com/member3) |
+| [nourhene klai ] | 🎯 Développement Principal | [@nourhene](https://github.com/nourheneklai) |
+| [mohammed amine challouf] | 🔧 Backend & Base de Données | [amine](https://github.com/mohammedaminechallouf) |
+| [malek jafrar] | 🎨 Frontend & Interface Utilisateur | [malek](https://github.com/malekjafrar) |
+| [iness misaoui] | 🧪 Tests & Documentation | [iness](https://github.com/inessmisoui) 
+| [adem friaa] | 🧪 Tests & Documentation | [adem](https://github.com/ademfriaa) ||
 
 ---
 
