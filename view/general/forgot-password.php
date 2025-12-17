@@ -172,6 +172,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ✔ Email envoyé !<br>
                 Vérifiez votre boîte de réception (et vos spams) pour le lien de réinitialisation.
             </div>
+            
+            <?php 
+            // Show debug link on localhost
+            if (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false && isset($_SESSION['debug_reset_link'])): 
+            ?>
+                <div class="debug-info">
+                    <strong>🔧 Mode Développement (localhost):</strong><br>
+                    <a href="<?php echo $_SESSION['debug_reset_link']; ?>" target="_blank" style="color: #00bfe7; word-break: break-all;">
+                        <?php echo $_SESSION['debug_reset_link']; ?>
+                    </a>
+                </div>
+            <?php endif; ?>
            
             <div class="back-link">
                 <a href="./signin.php">← Retour à la connexion</a>

@@ -260,13 +260,15 @@ session_start();
 
                 <!-- Service 1 -->
                 <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="services__item">
-                        <div class="services__item__icon">
-                            <img src="img/icons/si-2.png" alt="">
+                    <a href="../FrontOffice/success-stories.php" style="text-decoration: none; color: inherit; display: block;">
+                        <div class="services__item">
+                            <div class="services__item__icon">
+                                <img src="img/icons/si-2.png" alt="">
+                            </div>
+                            <h4>Success Stories</h4>
+                            <p>AbleLink met en relation les chercheurs d’emploi en situation de handicap avec des offres accessibles adaptées à leurs compétences.</p>
                         </div>
-                        <h4>Matching Emploi Inclusif</h4>
-                        <p>AbleLink met en relation les chercheurs d’emploi en situation de handicap avec des offres accessibles adaptées à leurs compétences.</p>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Service 2 -->
@@ -316,13 +318,15 @@ session_start();
 
                 <!-- Service 5 -->
                 <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="services__item">
-                        <div class="services__item__icon">
-                            <img src="img/icons/si-2.png" alt="">
+                    <a href="../FrontOffice/liste_offres.php" style="text-decoration: none; color: inherit; display: block;">
+                        <div class="services__item">
+                            <div class="services__item__icon">
+                                <img src="img/icons/si-2.png" alt="">
+                            </div>
+                            <h4>Offres et Candidatures</h4>
+                            <p>Accédez à des opportunités professionnelles adaptées et postulez facilement.</p>
                         </div>
-                        <h4>Formations & Ateliers</h4>
-                        <p>Nous proposons des ateliers sur l’accessibilité, la sensibilisation au handicap, les compétences numériques et le développement personnel.</p>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Service 6 -->

@@ -140,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["photo"]) && $_FILES[
         
         <!-- Photo Profil -->
         <img id="profileImg" 
-            src="<?= $user->getPhoto() ? '/webb/uploads/profile/' . $user->getPhoto() : '/webb/view/general/img/team/team-1.jpg'; ?>"
+            src="<?= $user->getPhoto() ? '/googo/uploads/profile/' . $user->getPhoto() : '/googo/view/general/img/team/team-1.jpg'; ?>"
 
              style="width:90px; height:90px; object-fit:cover; border-radius:50%; border:3px solid #7c3aed;">
 

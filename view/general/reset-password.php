@@ -46,11 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['reset_token'])) {
     if (empty($errors)) {
         $controller = new UserController();
         
-        // Update password
-        if ($controller->updateUserPassword($_SESSION['reset_email'], $password)) {
-            // Mark token as used
-            $controller->markTokenAsUsed($_SESSION['reset_token']);
-            
+        // Update password and mark token as used
+        if ($controller->updateUserPassword($_SESSION['reset_email'], $password, $_SESSION['reset_token'])) {
             // Clear session
             unset($_SESSION['reset_token']);
             unset($_SESSION['reset_email']);

@@ -162,7 +162,7 @@ private function getTimeAgo($datetime) {
             }
             
             $action = $data['action'] ?? '';
-            $eventId = $data['eventId'] ?? $data['event_id'] ?? null;
+            $eventId = $data['eventId'] ?? $data['event_id'] ?? $data['id'] ?? null;
             $evaluationId = $data['evaluationId'] ?? $data['evaluation_id'] ?? null;
             
             switch ($action) {
@@ -208,6 +208,11 @@ private function getTimeAgo($datetime) {
                     $result = $this->getAllUsers();
                     break;
                     
+                case 'get_event_details':
+                    if (!$eventId) throw new Exception('Event ID required');
+                    $result = $this->getEventDetails($eventId);
+                    break;
+                    
                 case 'add_user':
                     $result = $this->addUser($data);
                     break;
@@ -216,7 +221,22 @@ private function getTimeAgo($datetime) {
                     if (!$evaluationId) throw new Exception('Evaluation ID required');
                     $result = $this->getEvaluationDetails($evaluationId);
                     break;
+
+                case 'approve_story':
+                    if (!isset($data['storyId'])) throw new Exception('Story ID required');
+                    $result = $this->approveStory($data['storyId']);
+                    break;
                     
+                case 'reject_story':
+                    if (!isset($data['storyId'])) throw new Exception('Story ID required');
+                    $result = $this->rejectStory($data['storyId']);
+                    break;
+                    
+                case 'delete_story':
+                    if (!isset($data['storyId'])) throw new Exception('Story ID required');
+                    $result = $this->deleteStoryItem($data['storyId']);
+                    break;
+
                 default:
                     throw new Exception('Invalid action: ' . $action);
             }
@@ -252,7 +272,14 @@ private function getTimeAgo($datetime) {
             'reportedEvaluations' => $this->adminModel->getReportedEvaluations(),
             'enterprisesStats' => $this->adminModel->getEnterprisesStats(),
             'analyticsData' => $this->adminModel->getEventsForAnalytics(),
-            'statusDistribution' => $this->adminModel->getStatusDistribution()
+            'statusDistribution' => $this->adminModel->getStatusDistribution(),
+            'storyStats' => $this->adminModel->getStoryStats(),
+            'pendingStories' => $this->adminModel->getPendingStories(),
+            'storyAnalytics' => [
+                'monthly' => $this->adminModel->getStoriesByMonth(),
+                'distribution' => $this->adminModel->getStoriesStatusDistribution(),
+                'topContributors' => $this->adminModel->getTopContributors()
+            ]
         ];
     }
     
@@ -396,6 +423,60 @@ private function getTimeAgo($datetime) {
             ];
         } catch (Exception $e) {
             error_log("Error in AdminController::getEvaluationDetails: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function approveStory($storyId) {
+        try {
+            if ($this->adminModel->updateStoryStatus($storyId, 'approved')) {
+                return ['success' => true, 'message' => 'Story approuvée avec succès'];
+            }
+            throw new Exception('Erreur lors de l\'approbation de la story');
+        } catch (Exception $e) {
+            error_log('Error approving story: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function rejectStory($storyId) {
+        try {
+            if ($this->adminModel->updateStoryStatus($storyId, 'rejected')) {
+                return ['success' => true, 'message' => 'Story rejetée'];
+            }
+            throw new Exception('Erreur lors du rejet de la story');
+        } catch (Exception $e) {
+            error_log('Error rejecting story: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function deleteStoryItem($storyId) {
+        try {
+            if ($this->adminModel->deleteStory($storyId)) {
+                return ['success' => true, 'message' => 'Story supprimée avec succès'];
+            }
+            throw new Exception('Erreur lors de la suppression de la story');
+        } catch (Exception $e) {
+            error_log('Error deleting story: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function getEventDetails($eventId) {
+        try {
+            $event = $this->eventModel->getById($eventId);
+            
+            if ($event) {
+                return [
+                    'success' => true,
+                    'event' => $event
+                ];
+            } else {
+                throw new Exception('Événement non trouvé');
+            }
+        } catch (Exception $e) {
+            error_log('Error getting event details: ' . $e->getMessage());
             throw $e;
         }
     }

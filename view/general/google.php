@@ -92,7 +92,7 @@ $_SESSION['user_id'] = $user->getId();
 
 
 // نمشيو للداشبورد
-header("Location: http://localhost/yerabby/view/general/profile.php");
+header("Location: http://localhost/googo/view/general/profile.php");
 exit;
 
 

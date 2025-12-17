@@ -753,7 +753,7 @@ function toggleUserMenu() {
     <div class="user-menu" style="position: relative; display:flex; align-items:center; gap:10px;">
 
         <!-- Admin Image -->
-       <img src="/webb/view/general/img/team/team-1.jpg"
+       <img src="/googo/view/general/img/team/team-1.jpg"
      onclick="toggleProfileMenu()"
      style="
         width:45px;
@@ -788,7 +788,7 @@ function toggleUserMenu() {
 
             <!-- User Info -->
             <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
-                <img src="/webb/view/general/img/team/team-1.jpg"
+                <img src="/googo/view/general/img/team/team-1.jpg"
                      style="width:45px; height:45px; border-radius:50%; object-fit:cover;">
                 <div>
     <div style="font-weight:600;">Administrateur</div>

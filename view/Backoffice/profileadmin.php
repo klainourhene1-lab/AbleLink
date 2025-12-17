@@ -19,7 +19,7 @@ if (!$user) {
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["photo"]) && $_FILES["photo"]["error"] === 0) {
     
     // Create directory if it doesn't exist
-    $uploadDir = __DIR__ . "/../../uploads/profile/";
+    $uploadDir = __DIR__ . "/../../uploads/profiles/";
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir, 0777, true);
     }
@@ -578,7 +578,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["photo"]) && $_FILES[
                 <div class="profile-header">
                     <div class="profile-photo-wrapper">
                         <img id="profileImg" class="profile-photo"
-                            src="<?= $user->getPhoto() ? '../../uploads/profile/' . $user->getPhoto() : '../general/img/team/team-1.jpg'; ?>"
+                            src="<?= $user->getPhoto() ? '../../uploads/profiles/' . $user->getPhoto() : '../general/img/team/team-1.jpg'; ?>"
                             alt="Profile Photo">
                         
                         <button class="photo-upload-btn" onclick="document.getElementById('photoInput').click()">

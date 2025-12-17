@@ -135,9 +135,9 @@ public function getRecentStatusChanges($days = 7) {
         $stmt = $this->db->query("SELECT COUNT(*) as total FROM evenement WHERE MONTH(date) = MONTH(CURRENT_DATE()) AND YEAR(date) = YEAR(CURRENT_DATE())");
         $stats['eventsThisMonth'] = $stmt->fetch()['total'];
         
-        // Total participants
-        $stmt = $this->db->query("SELECT COUNT(*) as total FROM participation");
-        $stats['totalParticipants'] = $stmt->fetch()['total'];
+        // Total active users
+        $stmt = $this->db->query("SELECT COUNT(*) as total FROM utilisateur");
+        $stats['activeUsers'] = $stmt->fetch()['total'];
         
         return $stats;
     }
@@ -302,6 +302,153 @@ public function getRecentStatusChanges($days = 7) {
         } catch (Exception $e) {
             error_log('Error getting evaluation details: ' . $e->getMessage());
             return null;
+        }
+    }
+
+    /**
+     * Get pending success stories
+     */
+    public function getPendingStories() {
+        try {
+            $sql = "SELECT s.*, u.prenom, u.nom 
+                    FROM success_stories s 
+                    JOIN utilisateur u ON s.user_id = u.id 
+                    WHERE s.status = 'pending' 
+                    ORDER BY s.created_at DESC";
+            
+            $stmt = $this->db->query($sql);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Error getting pending stories: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    /**
+     * Get story statistics
+     */
+    public function getStoryStats() {
+        try {
+            $stats = [];
+            
+            // Total stories
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM success_stories");
+            $stats['total_stories'] = $stmt->fetch()['total'];
+            
+            // Pending stories
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM success_stories WHERE status = 'pending'");
+            $stats['pending_stories'] = $stmt->fetch()['total'];
+            
+            // Total comments
+            $stmt = $this->db->query("SELECT COUNT(*) as total FROM story_comments");
+            $stats['total_comments'] = $stmt->fetch()['total'];
+
+            return $stats;
+        } catch (Exception $e) {
+            error_log('Error getting story stats: ' . $e->getMessage());
+            return [
+                'total_stories' => 0,
+                'pending_stories' => 0,
+                'total_comments' => 0
+            ];
+        }
+    }
+
+    /**
+     * Update story status
+     */
+    public function updateStoryStatus($id, $status) {
+        try {
+            $sql = "UPDATE success_stories SET status = ? WHERE id = ?";
+            $stmt = $this->db->prepare($sql);
+            return $stmt->execute([$status, $id]);
+        } catch (Exception $e) {
+            error_log('Error updating story status: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Delete story
+     */
+    public function deleteStory($id) {
+        try {
+            // First delete comments (handled by cascade usually, but good to be safe if not)
+            $this->db->prepare("DELETE FROM story_comments WHERE story_id = ?")->execute([$id]);
+            
+            // Then delete story
+            return $this->db->prepare("DELETE FROM success_stories WHERE id = ?")->execute([$id]);
+        } catch (Exception $e) {
+            error_log('Error deleting story: ' . $e->getMessage());
+            return false;
+        }
+    }
+    
+
+    /**
+     * Get stories by month for analytics
+     */
+    public function getStoriesByMonth() {
+        try {
+            $sql = "SELECT 
+                    MONTH(created_at) as month,
+                    COUNT(*) as count
+                    FROM success_stories
+                    WHERE YEAR(created_at) = YEAR(CURRENT_DATE())
+                    GROUP BY MONTH(created_at)
+                    ORDER BY month";
+            
+            $stmt = $this->db->query($sql);
+            $results = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            
+            // Fill missing months with 0
+            $data = array_fill(1, 12, 0);
+            foreach ($results as $month => $count) {
+                $data[$month] = (int)$count;
+            }
+            
+            return array_values($data); // Return indexed array 0-11
+        } catch (Exception $e) {
+            error_log('Error getting stories by month: ' . $e->getMessage());
+            return array_fill(0, 12, 0);
+        }
+    }
+
+    /**
+     * Get stories status distribution
+     */
+    public function getStoriesStatusDistribution() {
+        try {
+            $stmt = $this->db->query("SELECT status, COUNT(*) as count FROM success_stories GROUP BY status");
+            $results = $stmt->fetchAll(PDO::FETCH_KEY_PAIR);
+            
+            $defaults = ['pending' => 0, 'approved' => 0, 'rejected' => 0];
+            return array_merge($defaults, array_map('intval', $results));
+        } catch (Exception $e) {
+            error_log('Error getting stories distribution: ' . $e->getMessage());
+            return ['pending' => 0, 'approved' => 0, 'rejected' => 0];
+        }
+    }
+
+    /**
+     * Get top contributors (users with most approved stories)
+     */
+    public function getTopContributors($limit = 5) {
+        try {
+            $sql = "SELECT u.prenom, u.nom, COUNT(s.id) as story_count, SUM(s.likes) as total_likes
+                    FROM success_stories s
+                    JOIN utilisateur u ON s.user_id = u.id
+                    WHERE s.status = 'approved'
+                    GROUP BY u.id
+                    ORDER BY story_count DESC, total_likes DESC
+                    LIMIT ?";
+            
+            $stmt = $this->db->prepare($sql);
+            $stmt->execute([$limit]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            error_log('Error getting top contributors: ' . $e->getMessage());
+            return [];
         }
     }
 }

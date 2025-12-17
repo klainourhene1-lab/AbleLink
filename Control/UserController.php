@@ -197,11 +197,8 @@ public function createUser($user) {
                 VALUES (:nom, :prenom, :email, :telephone, :mot_de_passe, :role, 'actif', NOW())
             ");
 
-            // Hash password if it's not already hashed
+            // Password is already hashed by User constructor, so just use it as-is
             $password = $user->getMotDePasse();
-            if (!password_needs_rehash($password, PASSWORD_BCRYPT)) {
-                $password = password_hash($password, PASSWORD_BCRYPT);
-            }
 
             return $stmt->execute([
                 'nom' => $user->getNom(),
@@ -279,8 +276,6 @@ public function createUser($user) {
     }
 
     // PASSWORD RESET METHODS
-// Dans UserController.php, modifiez la fonction sendPasswordResetEmail :
-
 public function sendPasswordResetEmail($email, $token) {
     try {
 
@@ -349,8 +344,8 @@ private function sendEmailAlternative($email, $token, $resetLink) {
     }
 }   
 
-    // Update user password
-    public function updateUserPassword($email, $newPassword) {
+    // Update user password and mark token as used
+    public function updateUserPassword($email, $newPassword, $token = null) {
     try {
         $hash = password_hash($newPassword, PASSWORD_BCRYPT);
 
@@ -360,10 +355,17 @@ private function sendEmailAlternative($email, $token, $resetLink) {
             WHERE email = :email
         ");
 
-        return $stmt->execute([
+        $result = $stmt->execute([
             'pwd' => $hash,
             'email' => $email
         ]);
+
+        // Mark token as used if provided
+        if ($token && $result) {
+            $this->markTokenAsUsed($token);
+        }
+
+        return $result;
 
     } catch (PDOException $e) {
         error_log("updateUserPassword error: " . $e->getMessage());
@@ -459,5 +461,20 @@ private function sendEmailAlternative($email, $token, $resetLink) {
     }
 }
 
+    // SEARCH USERS
+    public function searchUsers($query, $excludeId) {
+        try {
+            $sql = "SELECT id, nom, prenom, photo, role FROM utilisateur 
+                    WHERE (nom LIKE :query OR prenom LIKE :query OR email LIKE :query) 
+                    AND id != :excludeId
+                    LIMIT 10";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute(['query' => "%$query%", 'excludeId' => $excludeId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Search error: " . $e->getMessage());
+            return [];
+        }
+    }
 }
 ?>

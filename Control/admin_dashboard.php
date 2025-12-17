@@ -51,6 +51,7 @@ $reportedEvaluations = $dashboardData['reportedEvaluations'];
 $enterprisesStats = $dashboardData['enterprisesStats'];
 $analyticsData = $dashboardData['analyticsData'];
 $statusDistribution = $dashboardData['statusDistribution'];
+$storyStats = $dashboardData['storyStats'] ?? [];
 
 // Prepare chart data
 $monthlyEvents = array_fill(0, 12, 0);

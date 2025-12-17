@@ -113,18 +113,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // ======================
     if (empty($errors)) {
 
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-        // Créer objet user
+        // Créer objet user - password will be hashed automatically in User constructor for new users
         $user = new User(
             null,
             $nom,
             $prenom,
             $email,
             $telephone,
-            $hashedPassword,
+            $password,  // Pass plain password - User constructor will hash it
             ucfirst($user_type)
         );
+
+        // Debug logging
+        $storedHash = $user->getMotDePasse();
+        error_log("=== SIGNUP DEBUG ===");
+        error_log("Email: " . $email);
+        error_log("Plain password: " . $password);
+        error_log("Hash after User constructor: " . substr($storedHash, 0, 50) . "...");
+        error_log("Hash length: " . strlen($storedHash));
+        error_log("Is valid bcrypt? " . (strlen($storedHash) >= 60 && substr($storedHash, 0, 1) === '$' ? 'YES' : 'NO'));
 
         // Enregistrer
         if ($controller->addUser($user)) {

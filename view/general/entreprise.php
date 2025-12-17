@@ -26,7 +26,7 @@ $success = "";
 // Function to get photo URL - CORRIGÉE
 function getPhotoUrl($photo, $prenom, $nom) {
     if ($photo && file_exists(__DIR__ . '/../../uploads/profiles/' . $photo)) {
-        return '/webb/uploads/profiles/' . $photo;
+        return '/googo/uploads/profiles/' . $photo;
     }
     return 'img/team/team-1.jpg'; // Photo par défaut
 }

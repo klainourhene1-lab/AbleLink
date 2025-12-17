@@ -48,6 +48,10 @@ foreach ($users as $u) {
 
 
 ?>
+<?php
+$currentPage = 'users';
+$currentSubPage = 'list';
+?>
 
 <!DOCTYPE html>
 <html lang="fr">

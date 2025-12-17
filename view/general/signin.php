@@ -24,9 +24,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$user->verifyPassword($password)) {
             $errors['password'] = "Incorrect password";
 
-            error_log("Password verification failed for: " . $email);
-            error_log("Stored hash: " . $user->getMotDePasse());
+            $storedHash = $user->getMotDePasse();
+            $hashLength = strlen($storedHash);
+            $manualVerify = password_verify($password, $storedHash);
+            
+            error_log("=== PASSWORD VERIFICATION FAILED ===");
+            error_log("Email: " . $email);
             error_log("Input password: " . $password);
+            error_log("Stored hash: " . $storedHash);
+            error_log("Hash length: " . $hashLength);
+            error_log("Hash starts with: " . substr($storedHash, 0, 10));
+            error_log("Manual password_verify() result: " . ($manualVerify ? 'TRUE' : 'FALSE'));
+            error_log("User object password getter returns: " . strlen($user->getMotDePasse()) . " chars");
         } 
         else {
 

@@ -18,7 +18,14 @@ class User {
         $this->prenom = $prenom;
         $this->email = $email;
         $this->telephone = $telephone;
-        $this->mot_de_passe = $mot_de_passe;
+        // Hash password only for new users (when id is null) AND the password is not already hashed
+        // Bcrypt hashes start with $ and are at least 60 chars long
+        $isAlreadyHashed = $mot_de_passe && strlen($mot_de_passe) >= 60 && substr($mot_de_passe, 0, 1) === '$';
+        if ($mot_de_passe && !$id && !$isAlreadyHashed) {
+            $this->mot_de_passe = password_hash($mot_de_passe, PASSWORD_DEFAULT);
+        } else {
+            $this->mot_de_passe = $mot_de_passe;
+        }
         $this->role = $role;
         $this->statut = $statut;
         $this->date_inscription = $date_inscription ?: date('Y-m-d H:i:s');
