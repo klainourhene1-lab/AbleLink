@@ -1,0 +1,198 @@
+<?php
+namespace App\Controllers;
+
+use App\Core\Controller;
+use App\Models\SuccessStory;
+use App\Models\Comment;
+
+class AdminController extends Controller {
+    public function index(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { $_SESSION['admin_logged_in'] = true; $_SESSION['admin_user'] = 'auto'; }
+        $storyModel = new SuccessStory();
+        
+        // Récupérer les vraies statistiques
+        $allStories = $storyModel->allForAdmin();
+        $pendingStories = $storyModel->pending();
+        
+        // Calculs agrégés (jointures/SQL côté base)
+        $totalLikes = $storyModel->totalLikes();
+        $totalComments = (new Comment())->countAll();
+        
+        $stats = [
+            'stories' => count($allStories),
+            'pending' => count($pendingStories),
+            'approved' => count(array_filter($allStories, fn($s) => ($s['status'] ?? '') === 'approved')),
+            'comments' => $totalComments,
+            'likes' => $totalLikes,
+            'users' => 0, // À implémenter si vous avez une table users
+        ];
+        
+        // Rendre directement la vue admin sans layout (page standalone)
+        extract(['stats' => $stats, 'pendingStories' => $pendingStories]);
+        $viewFile = __DIR__ . '/../Views/admin/index.php';
+        include $viewFile;
+    }
+    
+    public function allStories(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $q = trim($_GET['q'] ?? '');
+        $status = trim($_GET['status'] ?? 'all');
+        $sort = trim($_GET['sort'] ?? 'recent');
+        $stories = (new SuccessStory())->listAdminWithFilters(['q' => $q, 'status' => $status, 'sort' => $sort]);
+        // Rendre directement la vue sans layout (page standalone)
+        extract(['stories' => $stories, 'q' => $q, 'status' => $status, 'sort' => $sort]);
+        $viewFile = __DIR__ . '/../Views/admin/stories.php';
+        include $viewFile;
+    }
+    
+    public function approve(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id) {
+            (new SuccessStory())->approve($id);
+        }
+        header('Location: /projetweb/ablelink/admin');
+    }
+    
+    public function reject(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id) {
+            (new SuccessStory())->reject($id);
+        }
+        header('Location: /projetweb/ablelink/admin');
+    }
+
+    public function bulk(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $action = trim($_POST['action'] ?? '');
+        $ids = isset($_POST['ids']) && is_array($_POST['ids']) ? array_map('intval', $_POST['ids']) : [];
+        $model = new SuccessStory();
+        if ($action === 'approve') { $model->updateStatusByIds($ids, 'approved'); }
+        elseif ($action === 'reject') { $model->updateStatusByIds($ids, 'rejected'); }
+        elseif ($action === 'delete') { $model->deleteByIds($ids); }
+        header('Location: /projetweb/ablelink/admin/all-stories');
+    }
+
+    public function reported(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $comments = (new \App\Models\Comment())->reportedComments(100);
+        extract(['comments' => $comments]);
+        $viewFile = __DIR__ . '/../Views/admin/reported.php';
+        include $viewFile;
+    }
+
+    public function comments(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $story_id = (int)($_GET['story_id'] ?? 0);
+        $reported = trim($_GET['reported'] ?? 'all');
+        $sort = trim($_GET['sort'] ?? 'recent');
+        $comments = (new \App\Models\Comment())->listAll(['story_id' => $story_id, 'reported' => $reported === 'all' ? '' : $reported, 'sort' => $sort]);
+        extract(['comments' => $comments, 'story_id' => $story_id, 'reported' => $reported, 'sort' => $sort]);
+        $viewFile = __DIR__ . '/../Views/admin/comments.php';
+        include $viewFile;
+    }
+
+    public function unreport(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $id = (int)($_GET['id'] ?? 0);
+        $return = trim($_GET['return'] ?? '');
+        $story_id = (int)($_GET['story_id'] ?? 0);
+        $reported = trim($_GET['reported'] ?? 'all');
+        if ($id) { (new \App\Models\Comment())->unreport($id); }
+        if ($return === 'comments') {
+            $url = '/projetweb/ablelink/admin/comments?reported=' . urlencode($reported);
+            if ($story_id > 0) { $url .= '&story_id=' . $story_id; }
+            header('Location: ' . $url);
+        } elseif ($return === 'story' && $story_id > 0) {
+            header('Location: /projetweb/ablelink/admin/story?id=' . $story_id);
+        } else {
+            header('Location: /projetweb/ablelink/admin/reported');
+        }
+    }
+
+    public function deleteComment(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $id = (int)($_GET['id'] ?? 0);
+        $return = trim($_GET['return'] ?? '');
+        $story_id = (int)($_GET['story_id'] ?? 0);
+        $reported = trim($_GET['reported'] ?? 'all');
+        if ($id) { (new \App\Models\Comment())->delete($id); }
+        if ($return === 'comments') {
+            $url = '/projetweb/ablelink/admin/comments?reported=' . urlencode($reported);
+            if ($story_id > 0) { $url .= '&story_id=' . $story_id; }
+            header('Location: ' . $url);
+        } elseif ($return === 'story' && $story_id > 0) {
+            header('Location: /projetweb/ablelink/admin/story?id=' . $story_id);
+        } else {
+            header('Location: /projetweb/ablelink/admin/reported');
+        }
+    }
+
+    public function story(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $id = (int)($_GET['id'] ?? 0);
+        $story = (new SuccessStory())->find($id);
+        if (!$story) { header('Location: /projetweb/ablelink/admin/all-stories'); return; }
+        $sort = trim($_GET['sort'] ?? 'recent');
+        $comments = (new Comment())->forStory($id, $sort);
+        extract(['story' => $story, 'comments' => $comments, 'sort' => $sort]);
+        $viewFile = __DIR__ . '/../Views/admin/story.php';
+        include $viewFile;
+    }
+
+    public function exportStories(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $q = trim($_GET['q'] ?? '');
+        $status = trim($_GET['status'] ?? 'all');
+        $sort = trim($_GET['sort'] ?? 'recent');
+        $start = trim($_GET['start'] ?? '');
+        $end = trim($_GET['end'] ?? '');
+        $include = trim($_GET['include'] ?? '');
+        $includeSet = array_filter(array_map('trim', explode(',', $include)));
+        $stories = (new SuccessStory())->listAdminWithFilters(['q' => $q, 'status' => $status, 'sort' => $sort, 'start' => $start, 'end' => $end]);
+        header('Content-Type: text/csv; charset=utf-8');
+        $filename = 'stories_export_' . date('Ymd_His') . '.csv';
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+        $out = fopen('php://output', 'w');
+        $header = ['id','title','author','likes','status','created_at'];
+        if (in_array('image', $includeSet, true)) $header[] = 'image';
+        if (in_array('video', $includeSet, true)) $header[] = 'video_url';
+        if (in_array('content', $includeSet, true)) $header[] = 'content';
+        fputcsv($out, $header);
+        foreach ($stories as $s) {
+            $row = [ $s['id'] ?? '', $s['title'] ?? '', $s['author'] ?? '', $s['likes'] ?? 0, $s['status'] ?? '', $s['created_at'] ?? '' ];
+            if (in_array('image', $includeSet, true)) $row[] = $s['image'] ?? '';
+            if (in_array('video', $includeSet, true)) $row[] = $s['video_url'] ?? '';
+            if (in_array('content', $includeSet, true)) $row[] = $s['content'] ?? ($s['description'] ?? '');
+            fputcsv($out, $row);
+        }
+        fclose($out);
+        exit;
+    }
+
+    public function stats(): void {
+        if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
+        if (empty($_SESSION['admin_logged_in'])) { header('Location: /projetweb/ablelink/admin_login.php'); return; }
+        $model = new SuccessStory();
+        $status = $model->statusCounts();
+        $cats = $model->categoryDistribution();
+        $monthsApproved = $model->monthlyProgression(6, 'approved');
+        $monthsPending = $model->monthlyProgression(6, 'pending');
+        $monthsRejected = $model->monthlyProgression(6, 'rejected');
+        extract(['status' => $status, 'cats' => $cats, 'monthsApproved' => $monthsApproved, 'monthsPending' => $monthsPending, 'monthsRejected' => $monthsRejected]);
+        $viewFile = __DIR__ . '/../Views/admin/stats.php';
+        include $viewFile;
+    }
+}

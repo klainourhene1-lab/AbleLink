@@ -1,0 +1,161 @@
+/* Theme Toggle Styles */
+/* CSS Variables for Dark and Light Themes */
+
+:root[data-theme="dark"] {
+    --bg-primary: #100028;
+    --bg-secondary: rgba(255, 255, 255, 0.1);
+    --bg-card: rgba(255, 255, 255, 0.1);
+    --bg-hover: rgba(255, 255, 255, 0.2);
+    
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-muted: #999999;
+    
+    --border-color: rgba(255, 255, 255, 0.2);
+    --border-hover: rgba(255, 255, 255, 0.3);
+    
+    --shadow: rgba(0, 0, 0, 0.3);
+    --gradient-start: #667eea;
+    --gradient-end: #764ba2;
+}
+
+:root[data-theme="light"] {
+    --bg-primary: #f5f7fa;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --bg-hover: #e8ecf1;
+    
+    --text-primary: #1a202c;
+    --text-secondary: #4a5568;
+    --text-muted: #718096;
+    
+    --border-color: #e2e8f0;
+    --border-hover: #cbd5e0;
+    
+    --shadow: rgba(0, 0, 0, 0.1);
+    --gradient-start: #667eea;
+    --gradient-end: #764ba2;
+}
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px var(--shadow);
+    transition: all 0.3s ease;
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 30px var(--shadow);
+}
+
+.theme-toggle-btn:active {
+    transform: translateY(-1px) scale(1);
+}
+
+.theme-toggle-btn i {
+    transition: transform 0.3s ease;
+}
+
+.theme-toggle-btn:hover i {
+    transform: rotate(20deg);
+}
+
+/* Apply theme colors to body and common elements */
+body {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.glass {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+
+.event-card {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color) !important;
+}
+
+.event-card:hover {
+    background: var(--bg-hover) !important;
+}
+
+.event-title {
+    color: var(--text-primary) !important;
+}
+
+.meta,
+.company-name,
+.event-detail {
+    color: var(--text-secondary) !important;
+}
+
+.muted {
+    color: var(--text-muted) !important;
+}
+
+.input {
+    background: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+.input:focus {
+    border-color: var(--gradient-start) !important;
+}
+
+.cta-button {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+.cta-button:hover {
+    background: var(--bg-hover) !important;
+}
+
+/* Light mode specific adjustments */
+:root[data-theme="light"] .header {
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 2px 10px var(--shadow);
+}
+
+:root[data-theme="light"] .header__nav__menu ul li a {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="light"] .stat-card {
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+:root[data-theme="light"] .pagination-btn {
+    background: var(--bg-secondary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="light"] .pagination-btn.active {
+    background: var(--gradient-start) !important;
+    color: white !important;
+}
+
+/* Smooth transitions for theme changes */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}

@@ -71,3 +71,6 @@ switch ($controller) {
         header('Location: ?controller=offre&action=liste');
         exit;
 }
+header('Location: ablelink/index.php');
+exit;
+?>
