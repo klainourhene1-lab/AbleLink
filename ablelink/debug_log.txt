@@ -210,3 +210,7 @@ Final count: 5
 Params: q='', status='', author='', cat=''
 Total stories: 5
 Final count: 5
+--- REQUEST 2025-12-17 15:48:22 ---
+Params: q='', status='', author='', cat=''
+Total stories: 6
+Final count: 6
