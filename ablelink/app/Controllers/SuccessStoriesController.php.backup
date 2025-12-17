@@ -1,0 +1,287 @@
+<?php
+namespace App\Controllers;
+
+use App\Core\Controller;
+use App\Models\SuccessStory;
+use App\Models\Comment;
+
+class SuccessStoriesController extends Controller {
+    public function index(): void {
+        $q = trim($_GET['q'] ?? '');
+        $sort = trim($_GET['sort'] ?? 'recent');
+        $author = trim($_GET['author'] ?? '');
+        $cat = trim($_GET['cat'] ?? '');
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $per = max(6, (int)($_GET['per'] ?? 6));
+        $model = new SuccessStory();
+        $total = $model->countPublicWithFilters(['q' => $q, 'author' => $author, 'cat' => $cat]);
+        $stories = $model->listPublicWithFilters([
+            'q' => $q,
+            'sort' => $sort,
+            'author' => $author,
+            'cat' => $cat,
+            'limit' => $per,
+            'offset' => ($page - 1) * $per,
+        ]);
+        $this->render('success_stories/index', ['stories' => $stories, 'q' => $q, 'sort' => $sort, 'author' => $author, 'cat' => $cat, 'page' => $page, 'per' => $per, 'total' => $total]);
+    }
+
+    public function create(): void {
+        $this->render('success_stories/form');
+    }
+
+    public function store(): void {
+        $title = trim($_POST['title'] ?? '');
+        $author = trim($_POST['author'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+        $videoUrl = trim($_POST['video_url'] ?? '');
+        $imagePath = '';
+        if (!empty($_FILES['image']['name'])) {
+            $uploadDir = __DIR__ . '/../../img/uploads';
+            if (!is_dir($uploadDir)) { @mkdir($uploadDir, 0775, true); }
+            $name = preg_replace('/[^A-Za-z0-9_.-]/', '_', basename($_FILES['image']['name']));
+            $ext = pathinfo($name, PATHINFO_EXTENSION);
+            $nameSafe = uniqid('story_', true) . ($ext ? '.' . strtolower($ext) : '');
+            $target = $uploadDir . '/' . $nameSafe;
+            if (@move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+                $imagePath = '/projetweb/ablelink/img/uploads/' . $nameSafe;
+            }
+        }
+        if ($title && $author && $content) {
+            (new SuccessStory())->create($title, $author, $content, $videoUrl, $imagePath);
+        }
+        header('Location: /projetweb/ablelink/success-stories');
+    }
+
+    public function edit(): void {
+        $id = (int)($_GET['id'] ?? 0);
+        $story = (new SuccessStory())->find($id);
+        if (!$story) { header('Location: /projetweb/ablelink/success-stories'); return; }
+        $this->render('success_stories/form', ['story' => $story]);
+    }
+
+    public function update(): void {
+        $id = (int)($_POST['id'] ?? 0);
+        $title = trim($_POST['title'] ?? '');
+        $author = trim($_POST['author'] ?? '');
+        $content = trim($_POST['content'] ?? '');
+        $videoUrl = trim($_POST['video_url'] ?? '');
+        $imagePath = trim($_POST['current_image'] ?? ($story['image'] ?? ''));
+        if (!empty($_FILES['image']['name'])) {
+            $uploadDir = __DIR__ . '/../../img/uploads';
+            if (!is_dir($uploadDir)) { @mkdir($uploadDir, 0775, true); }
+            $name = preg_replace('/[^A-Za-z0-9_.-]/', '_', basename($_FILES['image']['name']));
+            $ext = pathinfo($name, PATHINFO_EXTENSION);
+            $nameSafe = uniqid('story_', true) . ($ext ? '.' . strtolower($ext) : '');
+            $target = $uploadDir . '/' . $nameSafe;
+            if (@move_uploaded_file($_FILES['image']['tmp_name'], $target)) {
+                $imagePath = '/projetweb/ablelink/img/uploads/' . $nameSafe;
+            }
+        }
+        if ($id && $title && $author && $content) {
+            (new SuccessStory())->update($id, $title, $author, $content, $videoUrl, $imagePath);
+        }
+        header('Location: /projetweb/ablelink/success-stories');
+    }
+
+    public function delete(): void {
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id) { (new SuccessStory())->delete($id); }
+        $ret = trim($_GET['return'] ?? '');
+        if ($ret === 'admin') {
+            $q = trim($_GET['q'] ?? '');
+            $status = trim($_GET['status'] ?? 'all');
+            $sort = trim($_GET['sort'] ?? 'recent');
+            $page = trim($_GET['page'] ?? '');
+            $per = trim($_GET['per'] ?? '');
+            $url = '/projetweb/ablelink/admin/all-stories?status=' . urlencode($status) . '&sort=' . urlencode($sort) . '&q=' . urlencode($q);
+            if ($page !== '') { $url .= '&page=' . urlencode($page); }
+            if ($per !== '') { $url .= '&per=' . urlencode($per); }
+            header('Location: ' . $url);
+        } else {
+            header('Location: /projetweb/ablelink/success-stories');
+        }
+    }
+
+    public function like(): void {
+        $id = (int)($_GET['id'] ?? 0);
+        if ($id) { (new SuccessStory())->like($id); }
+        $return = $_GET['return'] ?? '';
+        if ($return === 'comments') {
+            header('Location: /projetweb/ablelink/success-stories/comments?id=' . $id);
+        } else {
+            header('Location: /projetweb/ablelink/success-stories');
+        }
+    }
+
+    public function share(): void {
+        $id = (int)($_GET['id'] ?? 0);
+        $platform = trim($_GET['platform'] ?? '');
+        $model = new SuccessStory();
+        if ($id) { $model->share($id); }
+        $story = $model->find($id);
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $detailUrl = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/projetweb/ablelink/success-stories/comments?id=' . $id;
+        $urlEnc = urlencode($detailUrl);
+        $titleEnc = urlencode($story['title'] ?? 'AbleLink');
+        $redir = '/projetweb/ablelink/success-stories/comments?id=' . $id;
+        if ($platform === 'facebook') {
+            $redir = 'https://www.facebook.com/sharer/sharer.php?u=' . $urlEnc;
+        } elseif ($platform === 'twitter') {
+            $redir = 'https://twitter.com/intent/tweet?url=' . $urlEnc . '&text=' . $titleEnc;
+        } elseif ($platform === 'linkedin') {
+            $redir = 'https://www.linkedin.com/sharing/share-offsite/?url=' . $urlEnc;
+        } elseif ($platform === 'whatsapp') {
+            $redir = 'https://api.whatsapp.com/send?text=' . $titleEnc . '%20' . $urlEnc;
+        }
+        header('Location: ' . $redir);
+    }
+
+    public function comments(): void {
+        $id = (int)($_GET['id'] ?? 0);
+        $story = (new SuccessStory())->find($id);
+        if (!$story) { header('Location: /projetweb/ablelink/success-stories'); return; }
+        $sort = $_GET['sort'] ?? 'recent';
+        $comments = (new Comment())->forStory($id, $sort);
+        $related = (new SuccessStory())->related($id, 3);
+        $text = isset($story['content']) ? (string)$story['content'] : (string)($story['description'] ?? '');
+        if (function_exists('mb_strimwidth')) { $desc = mb_strimwidth($text, 0, 180, '...'); }
+        else { $desc = strlen($text) > 180 ? substr($text, 0, 180) . '...' : $text; }
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $url = $scheme . '://' . $_SERVER['HTTP_HOST'] . '/projetweb/ablelink/success-stories/comments?id=' . $id;
+        $this->render('success_stories/comments', [
+            'story' => $story,
+            'comments' => $comments,
+            'related' => $related,
+            'sort' => $sort,
+            'og_title' => $story['title'] ?? 'AbleLink',
+            'og_description' => $desc,
+            'og_image' => '/projetweb/ablelink/img/logo/logo-1.png',
+            'og_url' => $url,
+        ]);
+    }
+
+    public function commentStore(): void {
+        if (session_status() !== \PHP_SESSION_ACTIVE) { session_start(); }
+        $storyId = (int)($_POST['story_id'] ?? 0);
+        $content = trim($_POST['content'] ?? '');
+        $parentId = (int)($_POST['parent_id'] ?? 0);
+        $sessAuthor = '';
+        if (!empty($_SESSION['user_logged_in'])) {
+            $sessAuthor = trim((string)($_SESSION['user_name'] ?? $_SESSION['user_email'] ?? ''));
+        }
+        $authorPost = trim((string)($_POST['author'] ?? ''));
+        $author = $sessAuthor !== '' ? $sessAuthor : $authorPost;
+        if ($author === '') { $author = 'Invité'; }
+        if ($storyId && $content !== '') {
+            if ($parentId) {
+                (new Comment())->createReply($storyId, $parentId, $author, $content);
+            } else {
+                (new Comment())->create($storyId, $author, $content);
+            }
+        }
+        header('Location: /projetweb/ablelink/success-stories/comments?id=' . $storyId);
+    }
+
+    public function commentDelete(): void {
+        $id = (int)($_GET['id'] ?? 0);
+        $storyId = (int)($_GET['story_id'] ?? 0);
+        if ($id) { (new Comment())->delete($id); }
+        header('Location: /projetweb/ablelink/success-stories/comments?id=' . $storyId);
+    }
+
+    public function commentLike(): void {
+        $id = (int)($_GET['id'] ?? 0);
+        $storyId = (int)($_GET['story_id'] ?? 0);
+        if ($id) { (new Comment())->like($id); }
+        header('Location: /projetweb/ablelink/success-stories/comments?id=' . $storyId);
+    }
+
+    public function commentReport(): void {
+        $id = (int)($_GET['id'] ?? 0);
+        $storyId = (int)($_GET['story_id'] ?? 0);
+        if ($id) { (new Comment())->report($id); }
+        header('Location: /projetweb/ablelink/success-stories/comments?id=' . $storyId);
+    }
+
+    public function history(): void {
+        $model = new SuccessStory();
+        $stats = $model->statusCounts();
+        
+        // Filtres
+        $q = trim($_GET['q'] ?? '');
+        $statusFilter = trim($_GET['status'] ?? '');
+        $author = trim($_GET['author'] ?? '');
+        $category = trim($_GET['category'] ?? '');
+        
+        // Récupérer toutes les histoires
+        $allStories = $model->allForAdmin();
+        
+        // LOG DEBUG (Chemin absolu pour être sûr)
+        $logFile = 'C:/xampp/htdocs/projetweb/ablelink/debug_log.txt';
+        $log = "--- REQUEST " . date('Y-m-d H:i:s') . " ---\n";
+        $log .= "Params: q='$q', status='$statusFilter', author='$author', cat='$category'\n";
+        $log .= "Total stories: " . count($allStories) . "\n";
+        
+        // Appliquer les filtres progressivement
+        $stories = $allStories;
+        
+        // Filtrage par Recherche (Titre/Auteur/Description)
+        if (!empty($q)) {
+            $log .= "Filtering by Q: '$q'\n";
+            $stories = array_filter($stories, function($s) use ($q, &$log) {
+                $title = (string)($s['title'] ?? '');
+                // Check both potential column names
+                $authorName = (string)($s['author'] ?? $s['author_name'] ?? '');
+                $description = (string)($s['description'] ?? $s['content'] ?? '');
+                
+                // Recherche insensible à la casse
+                $match = stripos($title, $q) !== false 
+                    || stripos($authorName, $q) !== false
+                    || stripos($description, $q) !== false;
+                
+                // Log only if match or for first 5 items to reduce spam
+                $log .= "  ID " . ($s['id']??'?') . " ('$title') vs '$q': " . ($match ? "MATCH" : "NO") . "\n";
+                return $match;
+            });
+        }
+        
+        // Filtrage par Statut
+        if (!empty($statusFilter)) {
+            $log .= "Filtering by Status: '$statusFilter'\n";
+            $stories = array_filter($stories, function($s) use ($statusFilter) {
+                $st = $s['status'] ?? 'pending';
+                return $st === $statusFilter;
+            });
+        }
+        
+        // Filtrage par Auteur (Champ spécifique)
+        if (!empty($author)) {
+            $log .= "Filtering by Author: '$author'\n";
+            $stories = array_filter($stories, function($s) use ($author) {
+                $a = (string)($s['author'] ?? $s['author_name'] ?? '');
+                return stripos($a, $author) !== false;
+            });
+        }
+        
+        if (!empty($category)) {
+            $stories = array_filter($stories, function($s) use ($category) {
+                return stripos((string)($s['category'] ?? ''), $category) !== false;
+            });
+        }
+        
+        // Réindexer le tableau
+        $stories = array_values($stories);
+        $log .= "Final count: " . count($stories) . "\n";
+        @file_put_contents($logFile, $log, FILE_APPEND);
+        
+        $this->render('success_stories/history', [
+            'stats' => $stats,
+            'stories' => $stories,
+            'q' => $q,
+            'statusFilter' => $statusFilter,
+            'author' => $author,
+            'category' => $category
+        ]);
+    }
+}
