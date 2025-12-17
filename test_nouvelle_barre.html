@@ -1,0 +1,77 @@
+<!-- TEST FILE - DELETE AFTER -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test - Nouvelle barre</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body style="background: #0f172a; padding: 40px;">
+    
+<h2 style="color: white;">Test de la nouvelle barre</h2>
+
+<!-- Filtres et Actions Rapides Bar -->
+<section class="filters-actions-section" style="padding: 0 0 30px 0;">
+    <div class="container">
+        <!-- Title -->
+        <h3 style="color: #ffffff; font-size: 18px; font-weight: 600; margin-bottom: 15px;">Filtres et Actions Rapides</h3>
+        
+        <!-- Filters Bar -->
+        <div class="filters-bar" style="background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 12px; padding: 15px 20px; margin-bottom: 30px;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                
+                <!-- Search Field -->
+                <div style="position: relative; flex: 0 0 200px;">
+                    <i class="fa fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #a0a0a0; font-size: 14px;"></i>
+                    <input type="text" placeholder="Filtrer" class="filter-search-input" 
+                           style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 8px; padding: 10px 12px 10px 35px; font-size: 13px;">
+                </div>
+                
+                <!-- Filter Buttons -->
+                <button class="filter-btn filter-cdi" data-type="CDI" 
+                        style="background: linear-gradient(135deg, #fb923c 0%, #f97316 100%); color: white; border: none; border-radius: 25px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 8px rgba(249, 115, 22, 0.3); display: inline-flex; align-items: center; gap: 8px;">
+                    <span style="width: 18px; height: 18px; background: white; border-radius: 50%; display: inline-block;"></span>
+                    CDI
+                </button>
+                
+                <button class="filter-btn filter-cdd" data-type="CDD" 
+                        style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; border-radius: 25px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3); display: inline-flex; align-items: center; gap: 8px;">
+                    <span style="width: 18px; height: 18px; background: white; border-radius: 50%; display: inline-block;"></span>
+                    CDD
+                </button>
+                
+                <button class="filter-btn filter-stage" data-type="Stage" 
+                        style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; border-radius: 25px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); display: inline-flex; align-items: center; gap: 8px;">
+                    <span style="width: 18px; height: 18px; background: white; border-radius: 50%; display: inline-block;"></span>
+                    Stage
+                </button>
+                
+                <button class="filter-btn filter-freelance" data-type="Freelance" 
+                        style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border: none; border-radius: 25px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3); display: inline-flex; align-items: center; gap: 8px;">
+                    <span style="width: 18px; height: 18px; background: white; border-radius: 50%; display: inline-block;"></span>
+                    Freelance
+                </button>
+                
+                <!-- Spacer -->
+                <div style="flex: 1;"></div>
+                
+                <!-- Action Buttons -->
+                <a href="#" class="action-btn" 
+                   style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3); text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-plus"></i>
+                    Ajouter une offre
+                </a>
+                
+                <button class="action-btn" 
+                        style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; border: none; border-radius: 8px; padding: 10px 20px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3); display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fa fa-download"></i>
+                    Exporter la liste (CSV)
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<p style="color: white;">Si vous voyez cette barre avec le titre "Filtres et Actions Rapides" et tous les boutons colorés, cela signifie que le code fonctionne correctement.</p>
+
+</body>
+</html>
