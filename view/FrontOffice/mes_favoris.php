@@ -219,6 +219,11 @@ $total = count($allFavorites);
                             <ul>
                                 <li><a href="../../view/general/index.php">Accueil</a></li>
                                 <li><a href="liste_offres.php">Offres d'Emploi</a></li>
+                                <?php if ($user_role === 'Entreprise'): ?>
+                                    <li><a href="../Backoffice/enterprise_offers.php">Mes Offres</a></li>
+                                <?php else: ?>
+                                    <li><a href="my_applications.php">Mes Candidatures</a></li>
+                                <?php endif; ?>
                                 <li class="active"><a href="mes_favoris.php">Mes Favoris</a></li>
                                 <?php if ($user_role === 'Admin'): ?>
                                     <li><a href="../../Controller/admin_dashboard.php">Administration</a></li>

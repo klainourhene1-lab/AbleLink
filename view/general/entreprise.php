@@ -550,6 +550,10 @@ $stay_open = $_SERVER['REQUEST_METHOD'] === 'POST';
                             <ul>
                                 <?php if ($_SESSION['user_role'] === 'Entreprise'): ?>
                                     <li><a href="entreprise.php"><i class="fa fa-building"></i> Espace Entreprise</a></li>
+                                    <li><a href="../Backoffice/enterprise_offers.php"><i class="fa fa-briefcase"></i> Mes Offres</a></li>
+                                <?php else: ?>
+                                    <li><a href="../FrontOffice/my_applications.php"><i class="fa fa-file-text"></i> Mes Candidatures</a></li>
+                                    <li><a href="../FrontOffice/mes_favoris.php"><i class="fa fa-heart"></i> Mes Favoris</a></li>
                                 <?php endif; ?>
                                 <li><a href="#" onclick="showProfile(); return false;"><i class="fa fa-user"></i> Voir le profil</a></li>
                                 <li><a href="#"><i class="fa fa-cog"></i> Paramètres du compte</a></li>
@@ -764,7 +768,7 @@ $stay_open = $_SERVER['REQUEST_METHOD'] === 'POST';
                     <div class="feature-box">
                         <h4><i class="fa fa-briefcase"></i> Publier une Offre</h4>
                         <p>Créez des annonces d'emploi accessibles aux candidats.</p>
-                        <a href="#" class="site-btn mt-3">Créer une Offre</a>
+                        <a href="../FrontOffice/create_offre.php" class="site-btn mt-3">Créer une Offre</a>
                     </div>
                 </div>
 
@@ -773,7 +777,7 @@ $stay_open = $_SERVER['REQUEST_METHOD'] === 'POST';
                     <div class="feature-box">
                         <h4><i class="fa fa-users"></i> Candidatures</h4>
                         <p>Consultez les candidats qui ont postulé à vos offres.</p>
-                        <a href="#" class="site-btn mt-3">Voir les Candidatures</a>
+                        <a href="../Backoffice/enterprise_offers.php" class="site-btn mt-3">Voir les Candidatures</a>
                     </div>
                 </div>
 
